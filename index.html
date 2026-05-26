@@ -786,7 +786,10 @@ function showProfile(player){
     badge.className='gindex-badge stale';
     staleNote.style.display='block';
     staleNote.textContent=`Гандикап устарел · не менялся ${daysSince(player.lastChangeDate)} дн.`;
-  }else{
+  } else if(gindex!==null && Math.abs(curHI-gindex)<0.001){
+    badge.className='gindex-badge good'; // на лучшем — синий (чёрный)
+    staleNote.style.display='none';
+  } else {
     badge.className=(gindex!==null&&curHI>gindex)?'gindex-badge bad':'gindex-badge good';
     staleNote.style.display='none';
   }
@@ -1034,18 +1037,21 @@ function buildFriendsFeed() {
       const cur = p.history.find(h => h.date === date);
       if (!cur) continue;
       const prev = prevDate ? p.history.find(h => h.date === prevDate) : null;
-      const diff = prev ? (cur.hi - prev.hi) : 0;
-      changed.push({ p, hi: cur.hi, diff });
+      const diff = prev ? parseFloat((cur.hi - prev.hi).toFixed(1)) : null;
+      // Показываем только если изменился HI
+      if (diff === null || Math.abs(diff) > 0.001) {
+        changed.push({ p, hi: cur.hi, diff });
+      }
     }
 
     if (!changed.length) continue;
 
     html += `<div class="feed-day-block"><div class="feed-day-header">${fmtDate(date)}</div>
-      <div class="feed-list">`;
+      <div class="feed-list" style="background:#fff;border-radius:var(--radius-lg);overflow:hidden;">`;
     html += changed.map(({p, hi, diff}) => {
-      const dc = diff < 0 ? 'neg' : diff > 0 ? 'pos' : 'zero';
-      const sign = diff > 0 ? '+' : '';
-      const deltaStr = diff !== 0 ? `${sign}${diff.toFixed(1)}` : '—';
+      const dc = diff === null ? 'zero' : diff < 0 ? 'neg' : diff > 0 ? 'pos' : 'zero';
+      const sign = diff !== null && diff > 0 ? '+' : '';
+      const deltaStr = diff !== null && Math.abs(diff) > 0.001 ? `${sign}${diff.toFixed(1)}` : '—';
       return `<div class="feed-item" style="cursor:pointer" onclick="goToPlayer('${p.agr}')">
         <div class="feed-item-info">
           <div class="feed-item-name">${p.name}</div>
