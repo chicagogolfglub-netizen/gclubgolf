@@ -91,7 +91,7 @@ header{padding:16px 16px 0;display:flex;align-items:center;justify-content:space
 
 /* GINDEX BADGE */
 .gindex-badge{display:flex;align-items:center;justify-content:space-between;padding:20px;margin-bottom:12px;border-radius:var(--radius-lg);}
-.gindex-badge.good{background:#000;}
+.gindex-badge.good{background:var(--blue);}
 .gindex-badge.bad{background:var(--red);}
 .gindex-badge.stale{background:#636366;}
 .badge-left{}
@@ -261,7 +261,7 @@ footer p{font-size:12px;color:var(--muted);font-weight:400;letter-spacing:0;text
       <div class="badge-left">
         <div class="badge-label">G-CLUB · Best HI</div>
         <div class="badge-value" id="gindexValue">—</div>
-        <div class="badge-sub">Лучший результат</div>
+        <div class="badge-sub" id="gindexSub">Лучший результат</div>
         <div class="badge-stale-note" id="gindexStaleNote" style="display:none"></div>
       </div>
     </div>
@@ -331,7 +331,7 @@ footer p{font-size:12px;color:var(--muted);font-weight:400;letter-spacing:0;text
       <div class="badge-left">
         <div class="badge-label">G-CLUB · Best HI</div>
         <div class="badge-value" id="myGindexValue">—</div>
-        <div class="badge-sub">Лучший результат</div>
+        <div class="badge-sub" id="myGindexSub">Лучший результат</div>
         <div class="badge-stale-note" id="myStaleNote" style="display:none"></div>
       </div>
     </div>
@@ -782,16 +782,25 @@ function showProfile(player){
   const staleNote=document.getElementById('gindexStaleNote');
   document.getElementById('gindexValue').textContent=gindex!==null?fmtHI(gindex):'—';
 
+  const gindexSub = document.getElementById('gindexSub');
   if(player.stale){
     badge.className='gindex-badge stale';
     staleNote.style.display='block';
     staleNote.textContent=`Гандикап устарел · не менялся ${daysSince(player.lastChangeDate)} дн.`;
+    if(gindexSub) gindexSub.textContent='Лучший результат';
   } else if(gindex!==null && Math.abs(curHI-gindex)<0.001){
-    badge.className='gindex-badge good'; // на лучшем — синий (чёрный)
+    badge.className='gindex-badge good';
     staleNote.style.display='none';
+    if(gindexSub) gindexSub.textContent='Лучший результат';
   } else {
     badge.className=(gindex!==null&&curHI>gindex)?'gindex-badge bad':'gindex-badge good';
     staleNote.style.display='none';
+    if(gindex!==null && curHI>gindex && gindexSub){
+      const diff=(curHI-gindex).toFixed(1);
+      gindexSub.textContent=`+${diff} от лучшего`;
+    } else if(gindexSub){
+      gindexSub.textContent='Лучший результат';
+    }
   }
 
   document.getElementById('statChanges').textContent=player.changes;
@@ -1205,13 +1214,24 @@ function showMyProfile(player) {
 
   document.getElementById('myGindexValue').textContent = fmtHI(gindex);
   const badge = document.getElementById('myGindexBadge');
+  const myGindexSub = document.getElementById('myGindexSub');
   if (player.stale) {
     badge.className = 'gindex-badge stale';
     document.getElementById('myStaleNote').style.display = 'block';
     document.getElementById('myStaleNote').textContent = 'Гандикап устарел · не менялся ' + daysSince(player.lastChangeDate) + ' дн.';
+    if(myGindexSub) myGindexSub.textContent = 'Лучший результат';
+  } else if(Math.abs(curHI-gindex)<0.001) {
+    badge.className = 'gindex-badge good';
+    document.getElementById('myStaleNote').style.display = 'none';
+    if(myGindexSub) myGindexSub.textContent = 'Лучший результат';
   } else {
     badge.className = curHI > gindex ? 'gindex-badge bad' : 'gindex-badge good';
     document.getElementById('myStaleNote').style.display = 'none';
+    if(myGindexSub && curHI > gindex){
+      myGindexSub.textContent = '+' + (curHI-gindex).toFixed(1) + ' от лучшего';
+    } else if(myGindexSub){
+      myGindexSub.textContent = 'Лучший результат';
+    }
   }
 
   renderFriendsList();
@@ -1235,18 +1255,45 @@ function showMyProfile(player) {
   const labels = pts.map(d => fmtDate(d.date));
   const values = pts.map(d => d.hi);
 
+  const myYearBands = [];
+  let myCurYear = null, myBandStart = 0;
+  labels.forEach((l, i) => {
+    const yr = l.slice(-2);
+    if(yr !== myCurYear) {
+      if(myCurYear !== null) myYearBands.push({year: myCurYear, from: myBandStart, to: i-1});
+      myCurYear = yr; myBandStart = i;
+    }
+    if(i === labels.length-1) myYearBands.push({year: myCurYear, from: myBandStart, to: i});
+  });
+  const myYearBgPlugin = {
+    id:'myYearBg',
+    beforeDraw(chart){
+      const {ctx, chartArea:{left,right,top,bottom}, scales:{x}} = chart;
+      myYearBands.forEach(b => {
+        const x0 = x.getPixelForValue(b.from);
+        const x1 = x.getPixelForValue(b.to);
+        ctx.fillStyle = b.year <= '25' ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0)';
+        ctx.fillRect(x0, top, x1-x0, bottom-top);
+      });
+    }
+  };
+
   myChartInstance = new Chart(ctx, {
     type:'line',
-    data:{labels,datasets:[{
-      data:values, borderWidth:1.5,
+    data:{labels:labels.map(l=>l.replace(/\.(\d{4})$/, (m,y)=>'.'+y.slice(2))),datasets:[{
+      data:values, borderWidth:1,
       segment:{borderColor:c=>{const i=c.p1DataIndex;return values[i]<values[i-1]?'#1A56DB':values[i]>values[i-1]?'#C2001A':'#8a8880';}},
-      pointBackgroundColor:values.map((v,i)=>i===0?'#1A1A18':v<values[i-1]?'#1A56DB':v>values[i-1]?'#C2001A':'#8a8880'),
+      pointBackgroundColor:values.map((v,i)=>i===0?'#000':v<values[i-1]?'#1A56DB':v>values[i-1]?'#C2001A':'#8a8880'),
       pointRadius:3, pointHoverRadius:5, pointBorderWidth:0, tension:0.3, fill:false
     }]},
+    plugins:[myYearBgPlugin],
     options:{
       responsive:true, maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{backgroundColor:'#1A1A18',titleColor:'#F4F1EB',bodyColor:'#F4F1EB',titleFont:{family:'Inter',size:11},bodyFont:{family:'Inter',size:18,weight:'300'},callbacks:{title:items=>fmtDate(items[0].label),label:item=>`HI ${fmtHI(item.raw)}`}}},
-      scales:{x:{ticks:{color:'#8a8880',font:{family:'Inter',size:10},maxRotation:45},grid:{color:'rgba(26,26,24,0.05)'}},y:{ticks:{color:'#8a8880',font:{family:'Inter',size:11},callback:v=>Number(v).toFixed(1)},grid:{color:'rgba(26,26,24,0.05)'}}}
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#000',titleColor:'#fff',bodyColor:'rgba(255,255,255,0.7)',titleFont:{family:'Inter',size:12,weight:'600'},bodyFont:{family:'Inter',size:16,weight:'700'},callbacks:{title:items=>items[0].label,label:item=>`HI ${fmtHI(item.raw)}`}}},
+      scales:{
+        x:{ticks:{color:'#8E8E93',font:{family:'Inter',size:10,weight:'500'},maxRotation:0},grid:{color:'rgba(0,0,0,0)'},border:{display:false}},
+        y:{ticks:{color:'#8E8E93',font:{family:'Inter',size:11},callback:v=>Number(v).toFixed(1)},grid:{color:'rgba(0,0,0,0.04)'},border:{display:false}}
+      }
     }
   });
 
