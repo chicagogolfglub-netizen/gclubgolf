@@ -261,6 +261,9 @@ footer p{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(
         <div class="my-preview-agr" id="myPreviewAgr"></div>
       </div>
       <button class="my-btn" onclick="saveMyProfile()">Это я →</button>
+      <div style="margin-top:12px;">
+        <button onclick="forceClearProfile()" style="background:transparent;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;padding:0;">Сбросить сохранённый профиль</button>
+      </div>
     </div>
   </div>
 
@@ -908,7 +911,6 @@ let myChartInstance = null;
 function loadMyProfile() {
   const agr = localStorage.getItem('my_agr');
   if (!agr) {
-    // Показываем форму настройки
     document.getElementById('mySetup').style.display = 'block';
     document.getElementById('myProfileActive').classList.remove('active');
     return;
@@ -916,10 +918,13 @@ function loadMyProfile() {
   if (!allData.length) return;
   const p = allData.find(x => x.agr === agr);
   if (!p) {
+    // AGR не найден в данных — сбрасываем
+    localStorage.removeItem('my_agr');
     document.getElementById('mySetup').style.display = 'block';
     document.getElementById('myProfileActive').classList.remove('active');
     return;
   }
+  document.getElementById('mySetup').style.display = 'none';
   showMyProfile(p);
 }
 
@@ -950,6 +955,16 @@ function saveMyProfile() {
   localStorage.setItem('my_agr', match.agr);
   document.getElementById('mySetup').style.display = 'none';
   showMyProfile(match);
+}
+
+function forceClearProfile() {
+  localStorage.removeItem('my_agr');
+  localStorage.removeItem('my_pdf_history');
+  localStorage.removeItem('my_pdf_ts');
+  document.getElementById('myAgrInput').value = '';
+  document.getElementById('myPreview').classList.remove('active');
+  document.getElementById('mySetup').style.display = 'block';
+  document.getElementById('myProfileActive').classList.remove('active');
 }
 
 function resetMyProfile() {
