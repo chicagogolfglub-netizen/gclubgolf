@@ -195,6 +195,7 @@ nav.nav-tabs {
 }
 .meta-value.neg { color:var(--blue); }
 .meta-value.pos { color:var(--red); }
+.meta-sub { font-size:10px; color:var(--red); font-weight:600; margin-top:2px; letter-spacing:0.04em; }
 
 /* AGR badge */
 .agr-badge { display:none; border-radius:var(--r); overflow:hidden; margin-bottom:8px; }
@@ -1086,10 +1087,13 @@ function showProfile(player){
   document.getElementById('playerAgr').textContent=player.agr.startsWith('NOAGR_')?'—':player.agr;
   if(player.notPaid)document.getElementById('agrBadge').classList.add('active');
 
+  const fromBest = gindex !== null ? parseFloat((curHI - gindex).toFixed(1)) : 0;
+  const fromBestStr = fromBest > 0.001 ? `<span class="meta-sub">+${fromBest.toFixed(1)} от лучшего</span>` : '';
   document.getElementById('playerMeta').innerHTML=`
     <div class="meta-item">
       <span class="meta-label">Текущий HI</span>
       <span class="meta-value">${fmtHI(curHI)}</span>
+      ${fromBestStr}
     </div>
     <div class="meta-item">
       <span class="meta-label">За период</span>
@@ -1100,35 +1104,22 @@ function showProfile(player){
   const staleNote=document.getElementById('gindexStaleNote');
   document.getElementById('gindexValue').textContent=gindex!==null?fmtHI(gindex):'—';
 
-  const gRight = document.getElementById('gindexRight');
   const gBest = document.getElementById('gindexBest');
-  const gDelta = document.getElementById('gindexDelta');
+  const gRight = document.getElementById('gindexRight');
   if(gRight) gRight.style.display='none';
   if(gBest) gBest.style.display='none';
-
-  const diffFromBest = gindex !== null ? parseFloat((curHI - gindex).toFixed(1)) : 0;
 
   if(player.stale){
     badge.className='gindex-badge stale';
     staleNote.style.display='block';
     staleNote.textContent=`Stale · ${daysSince(player.lastChangeDate)} days`;
-    if(diffFromBest > 0.001 && gRight && gDelta){
-      gDelta.textContent = '+' + diffFromBest.toFixed(1);
-      gRight.style.display = 'block';
-    } else if(gBest) {
-      gBest.style.display = 'block';
-    }
-  } else if(diffFromBest <= 0.001){
+  } else if(gindex!==null && Math.abs(curHI-gindex)<0.001){
     badge.className='gindex-badge good';
     staleNote.style.display='none';
     if(gBest) gBest.style.display='block';
   } else {
-    badge.className='gindex-badge bad';
+    badge.className='gindex-badge good';
     staleNote.style.display='none';
-    if(gRight && gDelta){
-      gDelta.textContent='+' + diffFromBest.toFixed(1);
-      gRight.style.display='block';
-    }
   }
 
   document.getElementById('statChanges').textContent=player.changes;
@@ -1507,8 +1498,10 @@ function showMyProfile(player) {
 
   document.getElementById('myName').textContent = player.name;
   document.getElementById('myAgrDisplay').textContent = player.agr;
+  const myFromBest = parseFloat((curHI - gindex).toFixed(1));
+  const myFromBestStr = myFromBest > 0.001 ? `<span class="meta-sub">+${myFromBest.toFixed(1)} от лучшего</span>` : '';
   document.getElementById('myMeta').innerHTML = `
-    <div class="meta-item"><span class="meta-label">Текущий HI</span><span class="meta-value">${fmtHI(curHI)}</span></div>
+    <div class="meta-item"><span class="meta-label">Текущий HI</span><span class="meta-value">${fmtHI(curHI)}</span>${myFromBestStr}</div>
     <div class="meta-item"><span class="meta-label">За период</span><span class="meta-value ${delta<0?'neg':delta>0?'pos':''}">${delta>0?'+':''}${delta}</span></div>
     <div class="meta-item"><span class="meta-label">Раундов</span><span class="meta-value">${h.length}</span></div>`;
 
