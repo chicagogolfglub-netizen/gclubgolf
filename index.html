@@ -1164,38 +1164,47 @@ async function handlePdfUpload(event) {
 }
 
 async function extractTextFromPdf(file) {
-  // Читаем PDF как бинарный текст — извлекаем строки между BT/ET (text blocks)
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = function(e) {
       try {
         const bytes = new Uint8Array(e.target.result);
         let raw = '';
-        // Декодируем байты в строку (latin1)
         for (let i = 0; i < bytes.length; i++) {
           raw += String.fromCharCode(bytes[i]);
         }
         
-        // Извлекаем текст из PDF stream объектов
         let text = '';
         
-        // Метод 1: ищем строки между BT и ET (text blocks)
+        // Ищем текстовые блоки BT...ET
         const btEt = raw.match(/BT[\s\S]*?ET/g) || [];
         for (const block of btEt) {
-          // Ищем строки в скобках: (текст)
-          const strings = block.match(/\(([^)]*)\)/g) || [];
-          for (const s of strings) {
-            const inner = s.slice(1, -1);
-            // Декодируем простые escape sequences
-            const decoded = inner.replace(/[\x00-\x08\x0b\x0e-\x1f]/g, ' ');
-            text += decoded + ' ';
+          // Строки в скобках (текст PDF)
+          const re = /\(([^\)]*(?:\.[^\)]*)*)\)/g;
+          let m;
+          while ((m = re.exec(block)) !== null) {
+            text += m[1] + ' ';
+          }
+          // Hex строки <...>
+          const hexRe = /<([0-9A-Fa-f]+)>/g;
+          let hm;
+          while ((hm = hexRe.exec(block)) !== null) {
+            const hex = hm[1];
+            for (let i = 0; i < hex.length; i += 2) {
+              const code = parseInt(hex.substr(i, 2), 16);
+              if (code > 31) text += String.fromCharCode(code);
+            }
+            text += ' ';
           }
         }
         
-        // Метод 2: если мало текста — ищем все строки в скобках во всём файле
-        if (text.trim().length < 100) {
-          const allStrings = raw.match(/\(([^)]{2,})\)/g) || [];
-          text = allStrings.map(s => s.slice(1,-1)).join(' ');
+        // Если мало — берём все строки в скобках из всего файла
+        if (text.trim().length < 50) {
+          const re2 = /\(([^)]{2,80})\)/g;
+          let m2;
+          while ((m2 = re2.exec(raw)) !== null) {
+            text += m2[1] + ' ';
+          }
         }
         
         resolve(text);
@@ -1209,6 +1218,28 @@ async function extractTextFromPdf(file) {
 }
 
 function parsePdfHistory(text) {
+  // Сначала пробуем распарсить как JSON (ответ от Claude API)
+  try {
+    const clean = text.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+    if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].date) {
+      return parsed.filter(r => r.date && r.hi).map(r => ({
+        date: r.date,
+        hi: parseFloat(r.hi),
+        score: r.score || null,
+        stbl: r.stbl || null,
+        tournament: r.tournament || '',
+        club: r.club || '',
+        format: r.format || ''
+      })).sort((a,b) => a.date.localeCompare(b.date));
+    }
+  } catch(e) {}
+  
+  // Fallback — старый парсер
+  return parsePdfHistoryFallback(text);
+}
+
+function parsePdfHistoryFallback(text) {
   // PDF.js возвращает текст как поток токенов разделённых пробелами.
   // Стратегия: ищем все вхождения дат DD.MM.YYYY как якоря,
   // между ними берём кусок и вытаскиваем нужные поля.
