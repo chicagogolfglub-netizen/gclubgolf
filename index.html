@@ -308,7 +308,10 @@ footer p{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(
     </div>
     <!-- Список друзей -->
     <div style="margin-top:32px;" id="myFriendsList">
-      <p class="section-label">Друзья <span id="myFriendsCount"></span></p>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--line);">
+        <p style="font-size:9px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);">Друзья <span id="myFriendsCount"></span></p>
+        <button onclick="clearAllFriends()" style="background:transparent;border:none;color:var(--muted);font-size:10px;cursor:pointer;letter-spacing:.1em;text-transform:uppercase;">Очистить всех</button>
+      </div>
       <div id="myFriendsBody"></div>
       <div id="myFriendsEmpty" style="display:none;font-size:12px;color:var(--muted);padding:12px 0;">
         Ты ещё никого не добавил. Найди игрока в поиске и нажми "+ Следить"
@@ -327,13 +330,7 @@ footer p{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-<script>
-if(window['pdfjs-dist/build/pdf']){
-  window['pdfjs-dist/build/pdf'].GlobalWorkerOptions.workerSrc =
-    'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
-}
-</script>
+
 <script>
 const API_KEY='AIzaSyBvrpd_FFS4VoPKNLcJsWFMUPxP34sfkcE';
 const SPREADSHEET_ID='1RjMZ6ZvInzJ4ULBCV4_mWMEZoC4J1YsVEurcf0I3M_w';
@@ -873,6 +870,13 @@ function renderFriendsList() {
   }).join('') + '</div>';
 }
 
+function clearAllFriends() {
+  if (!confirm('Удалить всех друзей?')) return;
+  saveFollows([]);
+  renderFriendsList();
+  updateFriendsCount();
+}
+
 function removeFriend(agr) {
   let follows = getFollows().filter(a => a !== agr);
   saveFollows(follows);
@@ -1152,18 +1156,54 @@ async function handlePdfUpload(event) {
 }
 
 async function extractTextFromPdf(file) {
-  // Используем PDF.js для извлечения текста
-  const pdfjsLib = window['pdfjs-dist/build/pdf'];
-  if (!pdfjsLib) throw new Error('PDF.js не загружен');
-  const arrayBuffer = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
-  let text = '';
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
-    const content = await page.getTextContent();
-    text += content.items.map(item => item.str).join(' ') + '\n';
-  }
-  return text;
+  // Читаем PDF как бинарный текст — извлекаем строки между BT/ET (text blocks)
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const bytes = new Uint8Array(e.target.result);
+        let raw = '';
+        // Декодируем байты в строку (latin1)
+        for (let i = 0; i < bytes.length; i++) {
+          raw += String.fromCharCode(bytes[i]);
+        }
+        
+        // Извлекаем текст из PDF stream объектов
+        let text = '';
+        
+        // Метод 1: ищем строки между BT и ET (text blocks)
+        const btEt = raw.match(/BT[\s\S]*?ET/g) || [];
+        for (const block of btEt) {
+          // Ищем строки в скобках: (текст)
+          const strings = block.match(/\(([^)]*)\)/g) || [];
+          for (const s of strings) {
+            const inner = s.slice(1, -1);
+            // Декодируем простые escape sequences
+            const decoded = inner
+              .replace(/\n/g, ' ')
+              .replace(/\r/g, ' ')
+              .replace(/\t/g, ' ')
+              .replace(/\\/g, '\')
+              .replace(/\(/g, '(')
+              .replace(/\)/g, ')');
+            text += decoded + ' ';
+          }
+        }
+        
+        // Метод 2: если мало текста — ищем все строки в скобках во всём файле
+        if (text.trim().length < 100) {
+          const allStrings = raw.match(/\(([^)]{2,})\)/g) || [];
+          text = allStrings.map(s => s.slice(1,-1)).join(' ');
+        }
+        
+        resolve(text);
+      } catch(err) {
+        reject(err);
+      }
+    };
+    reader.onerror = () => reject(new Error('Ошибка чтения файла'));
+    reader.readAsArrayBuffer(file);
+  });
 }
 
 function parsePdfHistory(text) {
