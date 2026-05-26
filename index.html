@@ -147,7 +147,13 @@ footer p{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(
     </div>
     <div class="suggestions" id="suggestions"></div>
   </div>
-  <div class="loading" id="loading">Загружаем данные...</div>
+  <div class="loading" id="loading">
+    <span id="loadingText">Загружаем данные...</span>
+    <span id="cacheNote" style="display:none;margin-left:8px;font-size:11px;color:var(--muted)"></span>
+  </div>
+  <div id="refreshWrap" style="display:none;margin-bottom:16px;">
+    <button onclick="refreshData()" style="background:transparent;border:none;color:var(--muted);font-size:11px;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;padding:0;">↻ Обновить данные</button>
+  </div>
   <div class="error-msg" id="errorMsg"></div>
   <div class="status-card" id="notFound"><h3>Нет в системе</h3><p>Игрок не найден в реестре АГР</p></div>
   <div class="status-card" id="notPaid"><h3 id="notPaidName"></h3><p>Не оплачен АГР — гандикап не присвоен</p></div>
@@ -239,11 +245,30 @@ function daysSince(s){
 
 // ── ЗАГРУЗКА ────────────────────────────────────────────────
 async function loadData(){
+  const CACHE_KEY='gindex_data';
+  const CACHE_TS='gindex_ts';
+  const CACHE_TTL=60*60*1000; // 1 час
+
+  try{
+    const ts=parseInt(localStorage.getItem(CACHE_TS)||'0');
+    const cached=localStorage.getItem(CACHE_KEY);
+    if(cached&&Date.now()-ts<CACHE_TTL){
+      return JSON.parse(cached);
+    }
+  }catch(e){}
+
   const url=`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
   const res=await fetch(url);
   const json=await res.json();
   if(json.error)throw new Error(json.error.message);
-  return json.values||[];
+  const values=json.values||[];
+
+  try{
+    localStorage.setItem(CACHE_KEY,JSON.stringify(values));
+    localStorage.setItem(CACHE_TS,String(Date.now()));
+  }catch(e){}
+
+  return values;
 }
 
 function parseData(rows){
@@ -304,23 +329,23 @@ function buildFeed(){
     // Сколько календарных дней между датами
     const calGap=prevDate?daysBetweenISO(prevDate,date):0;
 
-    // 1. НОВЫЕ — firstDate на эту дату И нет истории за 2025 (совсем новый в АГР)
-    const newPlayers=allData.filter(p=>{
-      if(p.firstDate!==date)return false;
-      return !p.history.some(h=>h.date.startsWith('2025'));
+    // 1. НОВЫЕ и СНОВА В АГР — firstDate на эту дату
+    // Логика по HI: HI >= 40 = новый игрок, HI < 40 = снова в АГР (уже играл)
+    const newPlayers=[];
+    const returnedPlayers=[];
+
+    allData.filter(p=>p.firstDate===date&&p.agr.startsWith('RU')).forEach(p=>{
+      const hiOnDate=p.history.find(h=>h.date===date)?.hi;
+      const has2025=p.history.some(h=>h.date.startsWith('2025'));
+      // Снова в АГР: был в 2025 ИЛИ HI < 40 (уже играл раньше)
+      if(has2025||(hiOnDate!==undefined&&hiOnDate<40)){
+        returnedPlayers.push(p);
+      } else {
+        // Новый: нет истории в 2025 И HI >= 40
+        newPlayers.push(p);
+      }
     });
     const newSet=new Set(newPlayers.map(p=>p.agr));
-
-    // 2. СНОВА В АГР — были в 2025, и впервые появились в 2026 именно на эту дату
-    const returnedPlayers=allData.filter(p=>{
-      if(newSet.has(p.agr))return false;
-      if(!p.agr.startsWith('RU'))return false;
-      // Первая запись в 2026 — именно эта дата
-      const first2026=p.history.find(h=>h.date.startsWith('2026'));
-      if(!first2026||first2026.date!==date)return false;
-      // И есть хоть одна запись в 2025
-      return p.history.some(h=>h.date.startsWith('2025'));
-    });
     const returnedSet=new Set(returnedPlayers.map(p=>p.agr));
 
     // 3. ИЗМЕНИЛИ ГАНДИКАП — HI на date != HI на prevDate
@@ -602,14 +627,39 @@ document.addEventListener('click',e=>{
 });
 
 // ── INIT ────────────────────────────────────────────────────
-async function init(){
+async function init(forceRefresh){
   document.getElementById('loading').classList.add('active');
+  document.getElementById('refreshWrap').style.display='none';
   document.getElementById('searchInput').disabled=true;
+
+  // Проверяем кеш
+  const CACHE_KEY='gindex_data';
+  const CACHE_TS='gindex_ts';
+  const CACHE_TTL=60*60*1000;
+  let fromCache=false;
+  try{
+    const ts=parseInt(localStorage.getItem(CACHE_TS)||'0');
+    if(!forceRefresh&&localStorage.getItem(CACHE_KEY)&&Date.now()-ts<CACHE_TTL){
+      fromCache=true;
+      const age=Math.round((Date.now()-ts)/60000);
+      document.getElementById('loadingText').textContent='Загружаем из кеша...';
+      document.getElementById('cacheNote').style.display='inline';
+      document.getElementById('cacheNote').textContent=`(данные ${age} мин. назад)`;
+    }
+  }catch(e){}
+
+  if(forceRefresh){
+    try{localStorage.removeItem(CACHE_KEY);localStorage.removeItem(CACHE_TS);}catch(e){}
+    document.getElementById('loadingText').textContent='Обновляем данные...';
+    document.getElementById('cacheNote').style.display='none';
+  }
+
   try{
     const rows=await loadData();
     allData=parseData(rows);
     document.getElementById('loading').classList.remove('active');
     document.getElementById('searchInput').disabled=false;
+    document.getElementById('refreshWrap').style.display='block';
   }catch(e){
     document.getElementById('loading').classList.remove('active');
     document.getElementById('errorMsg').textContent='Ошибка загрузки. Убедись что таблица открыта для просмотра.';
@@ -617,6 +667,13 @@ async function init(){
     console.error(e);
   }
 }
+
+function refreshData(){
+  hideAll();
+  document.getElementById('searchInput').value='';
+  init(true);
+}
+
 init();
 </script>
 </body>
