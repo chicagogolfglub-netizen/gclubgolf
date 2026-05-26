@@ -640,7 +640,7 @@ function switchTab(tab){
   document.getElementById('panel-search').classList.toggle('active',tab==='search');
   document.getElementById('panel-feed').classList.toggle('active',tab==='feed');
   document.getElementById('panel-my').classList.toggle('active',tab==='my');
-  if(tab==='feed'&&allData.length){if(getFollows().length>0&&feedMode==='all'){switchFeedTab('friends');}else{buildFeed();updateFriendsCount();}}
+  if(tab==='feed'&&allData.length){if(getFollows().length>0){switchFeedTab('friends');}else{switchFeedTab('all');}}
   if(tab==='my'&&allData.length)loadMyProfile();
 }
 
@@ -941,7 +941,69 @@ function switchFeedTab(mode) {
   document.getElementById('feedTabAll').style.color = mode==='all' ? 'var(--text)' : 'var(--muted)';
   document.getElementById('feedTabFriends').style.borderBottomColor = mode==='friends' ? 'var(--red)' : 'transparent';
   document.getElementById('feedTabFriends').style.color = mode==='friends' ? 'var(--text)' : 'var(--muted)';
-  buildFeed();
+  if (mode === 'friends') {
+    buildFriendsFeed();
+  } else {
+    buildFeed();
+  }
+}
+
+function buildFriendsFeed() {
+  const follows = getFollows();
+  const el = document.getElementById('feedContent');
+  document.getElementById('feedLoading').style.display = 'none';
+  updateFriendsCount();
+
+  if (!follows.length) {
+    el.innerHTML = '<div style="font-size:13px;color:var(--muted);padding:20px 0">У вас пока нет друзей. Найдите игрока в поиске и нажмите "+ Следить"</div>';
+    return;
+  }
+
+  // Берём только друзей
+  const friends = allData.filter(p => follows.includes(p.agr));
+  if (!friends.length) {
+    el.innerHTML = '<div style="font-size:13px;color:var(--muted);padding:20px 0">Друзья не найдены в данных</div>';
+    return;
+  }
+
+  // Показываем только 2026 год
+  const sortedDates = [...allDates].filter(d => d.startsWith('2026')).sort().reverse();
+
+  let html = '';
+  for (const date of sortedDates) {
+    const prevDateIdx = allDates.indexOf(date) - 1;
+    const prevDate = prevDateIdx >= 0 ? allDates[prevDateIdx] : null;
+
+    const changed = [];
+    for (const p of friends) {
+      const cur = p.history.find(h => h.date === date);
+      if (!cur) continue;
+      const prev = prevDate ? p.history.find(h => h.date === prevDate) : null;
+      const diff = prev ? (cur.hi - prev.hi) : 0;
+      changed.push({ p, hi: cur.hi, diff });
+    }
+
+    if (!changed.length) continue;
+
+    html += `<div class="feed-day-block"><div class="feed-day-header">${fmtDate(date)}</div>
+      <div class="feed-list">`;
+    html += changed.map(({p, hi, diff}) => {
+      const dc = diff < 0 ? 'neg' : diff > 0 ? 'pos' : 'zero';
+      const sign = diff > 0 ? '+' : '';
+      const deltaStr = diff !== 0 ? `${sign}${diff.toFixed(1)}` : '—';
+      return `<div class="feed-item" style="cursor:pointer" onclick="goToPlayer('${p.agr}')">
+        <div class="feed-item-info">
+          <div class="feed-item-name">${p.name}</div>
+          <div class="feed-item-sub">${p.agr}</div>
+        </div>
+        <div class="feed-item-hi">${fmtHI(hi)}</div>
+        <div class="feed-item-delta ${dc}">${deltaStr}</div>
+      </div>`;
+    }).join('');
+    html += `</div></div>`;
+  }
+
+  el.innerHTML = html || '<div style="font-size:13px;color:var(--muted);padding:20px 0">У ваших друзей пока нет данных</div>';
 }
 
 // ── МОЙ ПРОФИЛЬ ─────────────────────────────────────────────
