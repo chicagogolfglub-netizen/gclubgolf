@@ -533,6 +533,7 @@ function buildFeed(){
     const changedPlayers=[];
     if(prevDate){
       for(const p of allData){
+        if(!playerFilter(p))continue;
         if(newSet.has(p.agr)||returnedSet.has(p.agr))continue;
         const cur=p.history.find(h=>h.date===date);
         const prev=p.history.find(h=>h.date===prevDate);
@@ -620,11 +621,15 @@ function buildFeed(){
 
   document.getElementById('feedLoading').style.display='none';
   updateFriendsCount();
-  const emptyMsg = filterByFriends && follows.length === 0
-    ? '<div style="font-size:13px;color:var(--muted);padding:20px 0">Ты ещё ни за кем не следишь. Найди игрока и нажми "+ Следить"</div>'
-    : '<div style="font-size:13px;color:var(--muted);padding:20px 0">Событий за последние 7 дней нет</div>';
-  document.getElementById('feedContent').innerHTML=html||
-    emptyMsg;
+  let emptyMsg;
+  if (filterByFriends && follows.length === 0) {
+    emptyMsg = '<div style="font-size:13px;color:var(--muted);padding:20px 0">У вас пока нет друзей. Найдите игрока в поиске и нажмите "+ Следить"</div>';
+  } else if (filterByFriends && !html) {
+    emptyMsg = '<div style="font-size:13px;color:var(--muted);padding:20px 0">У ваших друзей не было изменений за последние 7 дней</div>';
+  } else {
+    emptyMsg = '<div style="font-size:13px;color:var(--muted);padding:20px 0">Событий за последние 7 дней нет</div>';
+  }
+  document.getElementById('feedContent').innerHTML=html||emptyMsg;
 }
 
 // ── НАВИГАЦИЯ ───────────────────────────────────────────────
