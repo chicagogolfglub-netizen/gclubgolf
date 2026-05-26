@@ -353,9 +353,9 @@ const TIMAKOV_HISTORY = [
 
 // Принудительная очистка всех данных (версия 3)
 (function(){
-  if(localStorage.getItem('app_version') !== '4') {
+  if(localStorage.getItem('app_version') !== '5') {
     localStorage.clear(); // чистим вообще всё
-    localStorage.setItem('app_version','4');
+    localStorage.setItem('app_version','5');
   }
 })();
 
@@ -1030,32 +1030,33 @@ function showMyProfile(player) {
   document.getElementById('mySetup').style.display = 'none';
   document.getElementById('myProfileActive').classList.add('active');
 
-  // Объединяем историю из Pivot + PDF если есть
+  // Скрываем форму вставки
+  const pasteSection = document.getElementById('pasteSection');
+  if (pasteSection) pasteSection.style.display = 'none';
+
+  // Объединяем историю из Pivot + раунды из PDF/хардкод
   let h = [...player.history];
-  try {
-    const savedTs = localStorage.getItem('my_pdf_ts');
+  
+  // Для RU009590 — всегда загружаем полную историю
+  let pdfRounds = [];
+  if (player.agr === 'RU009590') {
+    pdfRounds = TIMAKOV_HISTORY;
+  } else {
+    try { pdfRounds = JSON.parse(localStorage.getItem('my_pdf_history') || '[]'); } catch(e) {}
+  }
+  
+  if (pdfRounds.length) {
+    const pivotDates = new Set(h.map(x => x.date));
+    for (const pt of pdfRounds) {
+      if (!pivotDates.has(pt.date)) h.push(pt);
+    }
+    h.sort((a,b) => a.date.localeCompare(b.date));
     const statusEl = document.getElementById('pdfStatus');
-    const pasteSection = document.getElementById('pasteSection');
-    if (pasteSection) pasteSection.style.display = 'none'; // скрыто пока
-    if (savedTs && statusEl) {
-      statusEl.innerHTML = '✓ ' + (pdfRounds.length || 0) + ' раундов · <span class="pdf-ts">' + savedTs + '</span>';
+    if (statusEl) {
+      statusEl.innerHTML = '✓ ' + pdfRounds.length + ' раундов из АГР';
       statusEl.style.display = 'block';
     }
-  } catch(e) {}
-  try {
-    const pdfHist = JSON.parse(localStorage.getItem('my_pdf_history') || '[]');
-    if (pdfHist.length) {
-      // Добавляем точки из PDF которых нет в Pivot
-      const pivotDates = new Set(h.map(x => x.date));
-      for (const pt of pdfHist) {
-        if (!pivotDates.has(pt.date)) h.push(pt);
-      }
-      h.sort((a,b) => a.date.localeCompare(b.date));
-      document.getElementById('pdfStatus').textContent = '✓ История из PDF загружена (' + pdfHist.length + ' точек)';
-      document.getElementById('pdfStatus').classList.add('active');
-      document.getElementById('pdfLabel').textContent = '↑ Обновить выписку PDF';
-    }
-  } catch(e) {}
+  }
 
   const curHI = h[h.length-1].hi;
   const firstHI = h[0].hi;
