@@ -1036,12 +1036,10 @@ function showMyProfile(player) {
     const savedTs = localStorage.getItem('my_pdf_ts');
     const statusEl = document.getElementById('pdfStatus');
     const pasteSection = document.getElementById('pasteSection');
+    if (pasteSection) pasteSection.style.display = 'none'; // скрыто пока
     if (savedTs && statusEl) {
-      statusEl.innerHTML = '✓ История загружена · <span class="pdf-ts">' + savedTs + '</span> · <button onclick="resetPdfHistory()" style="background:transparent;border:none;color:var(--muted);font-size:10px;cursor:pointer;text-decoration:underline;">Обновить</button>';
+      statusEl.innerHTML = '✓ ' + (pdfRounds.length || 0) + ' раундов · <span class="pdf-ts">' + savedTs + '</span>';
       statusEl.style.display = 'block';
-      if (pasteSection) pasteSection.style.display = 'none';
-    } else {
-      if (pasteSection) pasteSection.style.display = 'block';
     }
   } catch(e) {}
   try {
