@@ -1179,13 +1179,7 @@ async function extractTextFromPdf(file) {
           for (const s of strings) {
             const inner = s.slice(1, -1);
             // Декодируем простые escape sequences
-            const decoded = inner
-              .replace(/\n/g, ' ')
-              .replace(/\r/g, ' ')
-              .replace(/\t/g, ' ')
-              .replace(/\\/g, '\')
-              .replace(/\(/g, '(')
-              .replace(/\)/g, ')');
+            const decoded = inner.replace(/[\x00-\x08\x0b\x0e-\x1f]/g, ' ');
             text += decoded + ' ';
           }
         }
