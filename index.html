@@ -119,6 +119,31 @@ footer{padding:24px;border-top:1px solid var(--line);display:flex;align-items:ce
 .footer-g{font-family:'Cormorant',serif;font-style:italic;font-weight:300;font-size:26px;color:var(--muted);position:relative;display:inline-block;}
 .footer-g::after{content:'';display:block;width:100%;height:2px;background:var(--red);opacity:.4;}
 footer p{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);}
+
+/* МОЙ ПРОФИЛЬ */
+.my-setup{background:#fff;padding:24px;margin-bottom:24px;}
+.my-setup-title{font-size:10px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.my-input-wrap{display:flex;border-bottom:2px solid var(--text);margin-bottom:20px;}
+.my-input-wrap input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'Inter',sans-serif;font-size:17px;font-weight:300;padding:10px 0;caret-color:var(--red);}
+.my-input-wrap input::placeholder{color:var(--muted);}
+.my-btn{background:var(--red);border:none;color:#fff;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;padding:10px 20px;}
+.my-btn-sec{background:transparent;border:1px solid var(--line);color:var(--muted);font-family:'Inter',sans-serif;font-size:11px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;padding:8px 16px;margin-top:8px;}
+.my-preview{background:var(--bg2);padding:16px;margin-bottom:16px;display:none;}
+.my-preview.active{display:block;}
+.my-preview-name{font-size:18px;font-weight:500;margin-bottom:2px;}
+.my-preview-agr{font-size:11px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;}
+.pdf-upload-wrap{border:1px dashed var(--line);padding:20px;text-align:center;cursor:pointer;margin-bottom:16px;transition:border-color .2s;}
+.pdf-upload-wrap:hover{border-color:var(--red);}
+.pdf-upload-wrap input{display:none;}
+.pdf-upload-label{font-size:12px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;}
+.pdf-status{font-size:12px;color:var(--green);margin-top:8px;display:none;}
+.pdf-status.active{display:block;}
+.my-profile-active{display:none;}
+.my-profile-active.active{display:block;animation:fadeUp .35s ease;}
+.my-badge{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:#fff;padding:4px 10px;font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px;}
+.follow-btn{background:transparent;border:1px solid var(--line);color:var(--muted);font-family:'Inter',sans-serif;font-size:10px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;padding:6px 14px;transition:all .2s;}
+.follow-btn.following{border-color:var(--text);color:var(--text);}
+.follow-btn:hover{border-color:var(--red);color:var(--red);}
 @media(max-width:600px){
   .panel,footer{padding-left:20px;padding-right:20px;}
   header{padding-left:20px;padding-right:20px;}
@@ -135,6 +160,7 @@ footer p{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(
 <nav class="nav-tabs">
   <div class="nav-tab active" onclick="switchTab('search')">Поиск</div>
   <div class="nav-tab" onclick="switchTab('feed')">Лента</div>
+  <div class="nav-tab" id="myTab" onclick="switchTab('my')">Я</div>
 </nav>
 
 <!-- ПОИСК -->
@@ -197,12 +223,82 @@ footer p{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(
   <div id="feedContent"></div>
 </div>
 
+
+<!-- МОЙ ПРОФИЛЬ -->
+<div class="panel" id="panel-my">
+  <p class="tagline">Мой Golf Journey</p>
+
+  <!-- Если не настроен -->
+  <div id="mySetup">
+    <div class="my-setup">
+      <p class="my-setup-title">Введи свой АГР номер</p>
+      <div class="my-input-wrap">
+        <input type="text" id="myAgrInput" placeholder="RU009590" autocomplete="off" oninput="previewMyAgr()">
+      </div>
+      <div class="my-preview" id="myPreview">
+        <div class="my-preview-name" id="myPreviewName"></div>
+        <div class="my-preview-agr" id="myPreviewAgr"></div>
+      </div>
+      <button class="my-btn" onclick="saveMyProfile()">Это я</button>
+    </div>
+  </div>
+
+  <!-- Если настроен -->
+  <div class="my-profile-active" id="myProfileActive">
+    <div class="my-badge">✦ Мой профиль</div>
+    <div class="player-header">
+      <div class="player-name" id="myName"></div>
+      <div class="player-agr" id="myAgrDisplay"></div>
+      <div class="meta-row" id="myMeta"></div>
+    </div>
+    <div class="gindex-badge good" id="myGindexBadge">
+      <span class="badge-label">G-INDEX</span>
+      <span class="badge-value" id="myGindexValue">—</span>
+      <span class="badge-sub">Лучший результат за всю историю</span>
+      <span class="badge-stale-note" id="myStaleNote" style="display:none"></span>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-num" id="myChanges">0</div><div class="stat-label">Изменений</div></div>
+      <div class="stat-box drops"><div class="stat-num" id="myDrops">0</div><div class="stat-label">↓ Снижений</div></div>
+      <div class="stat-box rises"><div class="stat-num" id="myRises">0</div><div class="stat-label">↑ Повышений</div></div>
+    </div>
+
+    <!-- PDF загрузка -->
+    <p class="section-label">Полная история из АГР</p>
+    <div class="pdf-upload-wrap" onclick="document.getElementById('pdfInput').click()">
+      <input type="file" id="pdfInput" accept=".pdf" onchange="handlePdfUpload(event)">
+      <div class="pdf-upload-label" id="pdfLabel">↑ Загрузить выписку PDF с hcp.rusgolf.ru</div>
+      <div class="pdf-status" id="pdfStatus"></div>
+    </div>
+
+    <div class="chart-section">
+      <p class="section-label">Динамика Handicap Index</p>
+      <div class="chart-container"><canvas id="myChart"></canvas></div>
+    </div>
+    <p class="section-label">История</p>
+    <table class="history-table">
+      <thead><tr><th>Дата</th><th>HI</th><th>Изменение</th></tr></thead>
+      <tbody id="myHistoryBody"></tbody>
+    </table>
+    <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--line);">
+      <button class="my-btn-sec" onclick="resetMyProfile()">Сменить профиль</button>
+    </div>
+  </div>
+</div>
+
 <footer>
   <div class="footer-g">G</div>
   <p>G-INDEX · Open Golf Journeys · 2026</p>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+<script>
+if(window['pdfjs-dist/build/pdf']){
+  window['pdfjs-dist/build/pdf'].GlobalWorkerOptions.workerSrc =
+    'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+}
+</script>
 <script>
 const API_KEY='AIzaSyBvrpd_FFS4VoPKNLcJsWFMUPxP34sfkcE';
 const SPREADSHEET_ID='1RjMZ6ZvInzJ4ULBCV4_mWMEZoC4J1YsVEurcf0I3M_w';
@@ -460,11 +556,13 @@ function buildFeed(){
 // ── НАВИГАЦИЯ ───────────────────────────────────────────────
 function switchTab(tab){
   document.querySelectorAll('.nav-tab').forEach((t,i)=>{
-    t.classList.toggle('active',(i===0&&tab==='search')||(i===1&&tab==='feed'));
+    t.classList.toggle('active',(i===0&&tab==='search')||(i===1&&tab==='feed')||(i===2&&tab==='my'));
   });
   document.getElementById('panel-search').classList.toggle('active',tab==='search');
   document.getElementById('panel-feed').classList.toggle('active',tab==='feed');
+  document.getElementById('panel-my').classList.toggle('active',tab==='my');
   if(tab==='feed'&&allData.length)buildFeed();
+  if(tab==='my'&&allData.length)loadMyProfile();
 }
 
 // ── ПОИСК ───────────────────────────────────────────────────
@@ -641,6 +739,203 @@ document.addEventListener('click',e=>{
     document.getElementById('suggestions').classList.remove('active');
 });
 
+
+// ── МОЙ ПРОФИЛЬ ─────────────────────────────────────────────
+let myChartInstance = null;
+
+function loadMyProfile() {
+  const agr = localStorage.getItem('my_agr');
+  if (!agr || !allData.length) return;
+  const p = allData.find(x => x.agr === agr);
+  if (!p) return;
+  showMyProfile(p);
+}
+
+function previewMyAgr() {
+  const q = document.getElementById('myAgrInput').value.trim().toUpperCase();
+  const preview = document.getElementById('myPreview');
+  if (q.length < 4) { preview.classList.remove('active'); return; }
+  const match = allData.find(p => p.agr.toUpperCase() === q || p.agr.toUpperCase().includes(q));
+  if (!match) { preview.classList.remove('active'); return; }
+  document.getElementById('myPreviewName').textContent = match.name;
+  document.getElementById('myPreviewAgr').textContent = match.agr;
+  preview.classList.add('active');
+}
+
+function saveMyProfile() {
+  const q = document.getElementById('myAgrInput').value.trim().toUpperCase();
+  const match = allData.find(p => p.agr.toUpperCase() === q || p.agr.toUpperCase().includes(q));
+  if (!match) { alert('Игрок не найден. Введи точный АГР номер, например RU009590'); return; }
+  localStorage.setItem('my_agr', match.agr);
+  showMyProfile(match);
+}
+
+function resetMyProfile() {
+  localStorage.removeItem('my_agr');
+  localStorage.removeItem('my_pdf_history');
+  document.getElementById('mySetup').style.display = 'block';
+  document.getElementById('myProfileActive').classList.remove('active');
+  document.getElementById('myAgrInput').value = '';
+  document.getElementById('myPreview').classList.remove('active');
+}
+
+function showMyProfile(player) {
+  document.getElementById('mySetup').style.display = 'none';
+  document.getElementById('myProfileActive').classList.add('active');
+
+  // Объединяем историю из Pivot + PDF если есть
+  let h = [...player.history];
+  try {
+    const pdfHist = JSON.parse(localStorage.getItem('my_pdf_history') || '[]');
+    if (pdfHist.length) {
+      // Добавляем точки из PDF которых нет в Pivot
+      const pivotDates = new Set(h.map(x => x.date));
+      for (const pt of pdfHist) {
+        if (!pivotDates.has(pt.date)) h.push(pt);
+      }
+      h.sort((a,b) => a.date.localeCompare(b.date));
+      document.getElementById('pdfStatus').textContent = '✓ История из PDF загружена (' + pdfHist.length + ' точек)';
+      document.getElementById('pdfStatus').classList.add('active');
+      document.getElementById('pdfLabel').textContent = '↑ Обновить выписку PDF';
+    }
+  } catch(e) {}
+
+  const curHI = h[h.length-1].hi;
+  const firstHI = h[0].hi;
+  const delta = (curHI - firstHI).toFixed(1);
+  const gindex = Math.min(...h.map(x=>x.hi));
+
+  document.getElementById('myName').textContent = player.name;
+  document.getElementById('myAgrDisplay').textContent = player.agr;
+  document.getElementById('myMeta').innerHTML = `
+    <div class="meta-item"><span class="meta-label">Текущий HI</span><span class="meta-value">${fmtHI(curHI)}</span></div>
+    <div class="meta-item"><span class="meta-label">За период</span><span class="meta-value ${delta<0?'neg':delta>0?'pos':''}">${delta>0?'+':''}${delta}</span></div>
+    <div class="meta-item"><span class="meta-label">Раундов</span><span class="meta-value">${h.length}</span></div>`;
+
+  document.getElementById('myGindexValue').textContent = fmtHI(gindex);
+  const badge = document.getElementById('myGindexBadge');
+  if (player.stale) {
+    badge.className = 'gindex-badge stale';
+    document.getElementById('myStaleNote').style.display = 'block';
+    document.getElementById('myStaleNote').textContent = 'Гандикап устарел · не менялся ' + daysSince(player.lastChangeDate) + ' дн.';
+  } else {
+    badge.className = curHI > gindex ? 'gindex-badge bad' : 'gindex-badge good';
+    document.getElementById('myStaleNote').style.display = 'none';
+  }
+
+  document.getElementById('myChanges').textContent = player.changes;
+  document.getElementById('myDrops').textContent = player.drops;
+  document.getElementById('myRises').textContent = player.rises;
+
+  // Chart
+  if (myChartInstance) myChartInstance.destroy();
+  const ctx = document.getElementById('myChart').getContext('2d');
+  const pts = h.filter((d,i) => i===0 || d.date===h[h.length-1].date || d.hi!==h[i-1].hi);
+  const labels = pts.map(d => fmtDate(d.date));
+  const values = pts.map(d => d.hi);
+
+  myChartInstance = new Chart(ctx, {
+    type:'line',
+    data:{labels,datasets:[{
+      data:values, borderWidth:1.5,
+      segment:{borderColor:c=>{const i=c.p1DataIndex;return values[i]<values[i-1]?'#1A56DB':values[i]>values[i-1]?'#C2001A':'#8a8880';}},
+      pointBackgroundColor:values.map((v,i)=>i===0?'#1A1A18':v<values[i-1]?'#1A56DB':v>values[i-1]?'#C2001A':'#8a8880'),
+      pointRadius:3, pointHoverRadius:5, pointBorderWidth:0, tension:0.3, fill:false
+    }]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#1A1A18',titleColor:'#F4F1EB',bodyColor:'#F4F1EB',titleFont:{family:'Inter',size:11},bodyFont:{family:'Inter',size:18,weight:'300'},callbacks:{title:items=>fmtDate(items[0].label),label:item=>`HI ${fmtHI(item.raw)}`}}},
+      scales:{x:{ticks:{color:'#8a8880',font:{family:'Inter',size:10},maxRotation:45},grid:{color:'rgba(26,26,24,0.05)'}},y:{ticks:{color:'#8a8880',font:{family:'Inter',size:11},callback:v=>Number(v).toFixed(1)},grid:{color:'rgba(26,26,24,0.05)'}}}
+    }
+  });
+
+  // History table
+  const filtered = h.filter((d,i) => i===0 || d.date===h[h.length-1].date || d.hi!==h[i-1].hi);
+  const bestHI = gindex;
+  document.getElementById('myHistoryBody').innerHTML = filtered.slice().reverse().map((d,i,arr) => {
+    const prev = arr[i+1];
+    let deltaStr='', dc='zero';
+    if (prev) {
+      const diff = (d.hi-prev.hi).toFixed(1);
+      if(diff<0){deltaStr=diff;dc='neg';}else if(diff>0){deltaStr='+'+diff;dc='pos';}else{deltaStr='—';dc='zero';}
+    }
+    const isBest = Math.abs(d.hi-bestHI)<0.001;
+    return `<tr class="${isBest?'best-row':''}">
+      <td class="td-date">${fmtDate(d.date)}</td>
+      <td class="td-hi">${fmtHI(d.hi)}</td>
+      <td class="td-delta ${dc}">${deltaStr}</td>
+    </tr>`;
+  }).join('');
+}
+
+// PDF парсинг
+async function handlePdfUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  document.getElementById('pdfLabel').textContent = 'Читаем PDF...';
+
+  try {
+    const text = await extractTextFromPdf(file);
+    const history = parsePdfHistory(text);
+    if (history.length === 0) {
+      document.getElementById('pdfLabel').textContent = 'Не удалось прочитать историю. Попробуй другой файл.';
+      return;
+    }
+    localStorage.setItem('my_pdf_history', JSON.stringify(history));
+    const agr = localStorage.getItem('my_agr');
+    const p = allData.find(x => x.agr === agr);
+    if (p) showMyProfile(p);
+  } catch(e) {
+    document.getElementById('pdfLabel').textContent = 'Ошибка чтения PDF: ' + e.message;
+    console.error(e);
+  }
+}
+
+async function extractTextFromPdf(file) {
+  // Используем PDF.js для извлечения текста
+  const pdfjsLib = window['pdfjs-dist/build/pdf'];
+  if (!pdfjsLib) throw new Error('PDF.js не загружен');
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+  let text = '';
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    text += content.items.map(item => item.str).join(' ') + '\n';
+  }
+  return text;
+}
+
+function parsePdfHistory(text) {
+  const history = [];
+  // Ищем паттерн даты и HI в тексте PDF из hcp.rusgolf.ru
+  // Формат: DD.MM.YYYY ... HI (число)
+  const lines = text.split(/\n|\r/);
+  for (const line of lines) {
+    const dateMatch = line.match(/(\d{2}\.\d{2}\.\d{4})/);
+    const hiMatch = line.match(/\b(\d{1,2}[,.]\d{1}|\d{2,3})\b/g);
+    if (dateMatch && hiMatch) {
+      const [d, m, y] = dateMatch[1].split('.');
+      const date = `${y}-${m}-${d}`;
+      // Берём последнее подходящее число как HI (обычно в конце строки)
+      for (let j = hiMatch.length-1; j >= 0; j--) {
+        const hi = parseFloat(hiMatch[j].replace(',','.'));
+        if (hi > 0 && hi < 60) {
+          history.push({date, hi});
+          break;
+        }
+      }
+    }
+  }
+  // Убираем дубли по дате
+  const seen = new Set();
+  return history.filter(h => {
+    if (seen.has(h.date)) return false;
+    seen.add(h.date);
+    return true;
+  }).sort((a,b) => a.date.localeCompare(b.date));
+}
+
 // ── INIT ────────────────────────────────────────────────────
 async function init(forceRefresh){
   document.getElementById('loading').classList.add('active');
@@ -675,6 +970,7 @@ async function init(forceRefresh){
     document.getElementById('loading').classList.remove('active');
     document.getElementById('searchInput').disabled=false;
     document.getElementById('refreshWrap').style.display='block';
+    loadMyProfile();
   }catch(e){
     document.getElementById('loading').classList.remove('active');
     document.getElementById('errorMsg').textContent='Ошибка загрузки. Убедись что таблица открыта для просмотра.';
