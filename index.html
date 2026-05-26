@@ -343,19 +343,19 @@ const TIMAKOV_HISTORY = [
   {date:'2024-08-30',tournament:'Тур HCP15+',club:'Пестово Гольф Клуб',format:'СФД-18',score:114,stbl:34,hi:32.2},
   {date:'2024-09-15',tournament:'Ladies and Gentlemen',club:'ЗАВИДОВО, Россия гольф-клуб',format:'ИСУ-18',score:108,stbl:null,hi:28.7},
   {date:'2025-05-17',tournament:'Открытие Сезона гости',club:'Московский городской Гольф Клуб',format:'СФД-18',score:86,stbl:42,hi:24.4},
-  {date:'2025-05-24',tournament:'6th Golf Mad Moscow Open',club:'ЗАВИДОВО, Россия гольф-клуб',format:'СФД-18',score:100,stbl:39,hi:22.2},
+  {date:'2025-05-24',tournament:'6th Golf Mad Moscow Open Kempinski',club:'ЗАВИДОВО, Россия гольф-клуб',format:'СФД-18',score:100,stbl:39,hi:22.2},
   {date:'2025-06-01',tournament:'Alumni Skolkovo',club:'Форест Хиллс гольф-клуб',format:'СФД-18',score:98,stbl:36,hi:21.9},
-  {date:'2025-07-17',tournament:'Кубок Лиги Ставок - 2. День 2',club:'Московский городской Гольф Клуб',format:'СФД-18',score:90,stbl:31,hi:22.0},
+  {date:'2025-07-17',tournament:'Кубок Лиги Ставок — 2. День 2',club:'Московский городской Гольф Клуб',format:'СФД-18',score:90,stbl:31,hi:22.0},
   {date:'2025-08-16',tournament:'Aton Golf Cup Пестово',club:'Пестово Гольф Клуб',format:'СФД-18',score:105,stbl:29,hi:22.0},
   {date:'2025-08-21',tournament:'Кубок Лиги Ставок 5 этап День 1',club:'Crystal Lakes Golf & Country Club',format:'СФД-18',score:107,stbl:26,hi:22.0},
-  {date:'2025-08-31',tournament:'Турнир Сколково 31.08.2025г',club:'ЛИНКС Нэшнл гольф-клуб',format:'СФД-18',score:98,stbl:36,hi:22.0}
+  {date:'2025-08-31',tournament:'Турнир Сколково',club:'ЛИНКС Нэшнл гольф-клуб',format:'СФД-18',score:98,stbl:36,hi:22.0}
 ];
 
 // Принудительная очистка всех данных (версия 3)
 (function(){
-  if(localStorage.getItem('app_version') !== '5') {
+  if(localStorage.getItem('app_version') !== '6') {
     localStorage.clear(); // чистим вообще всё
-    localStorage.setItem('app_version','5');
+    localStorage.setItem('app_version','6');
   }
 })();
 
