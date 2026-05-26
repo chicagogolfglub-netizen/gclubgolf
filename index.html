@@ -329,22 +329,37 @@ function buildFeed(){
     // Сколько календарных дней между датами
     const calGap=prevDate?daysBetweenISO(prevDate,date):0;
 
-    // 1. НОВЫЕ и СНОВА В АГР — firstDate на эту дату
-    // Логика по HI: HI >= 40 = новый игрок, HI < 40 = снова в АГР (уже играл)
+    // 1. НОВЫЕ и СНОВА В АГР
     const newPlayers=[];
     const returnedPlayers=[];
 
-    allData.filter(p=>p.firstDate===date&&p.agr.startsWith('RU')).forEach(p=>{
+    for(const p of allData){
+      if(!p.agr.startsWith('RU'))continue;
+      const hasOnDate=p.presentDates.has(date);
+      if(!hasOnDate)continue;
+
       const hiOnDate=p.history.find(h=>h.date===date)?.hi;
       const has2025=p.history.some(h=>h.date.startsWith('2025'));
-      // Снова в АГР: был в 2025 ИЛИ HI < 40 (уже играл раньше)
-      if(has2025||(hiOnDate!==undefined&&hiOnDate<40)){
-        returnedPlayers.push(p);
-      } else {
-        // Новый: нет истории в 2025 И HI >= 40
-        newPlayers.push(p);
+
+      // СНОВА В АГР — вариант А: первая запись на эту дату, HI < 40 или есть 2025
+      if(p.firstDate===date){
+        if(has2025||(hiOnDate!==undefined&&hiOnDate<40)){
+          returnedPlayers.push(p);
+        } else {
+          newPlayers.push(p); // HI >= 40 и нет 2025 = реально новый
+        }
+        continue;
       }
-    });
+
+      // СНОВА В АГР — вариант Б: был раньше, пропал, вернулся
+      // Нет на предыдущей дате, но есть запись до этой даты
+      if(!prevDate)continue;
+      if(p.presentDates.has(prevDate))continue; // был на предыдущей — не возврат
+      const lastBefore=[...p.history].reverse().find(h=>h.date<date);
+      if(!lastBefore)continue;
+      const gap=daysBetweenISO(lastBefore.date,date);
+      if(gap>=14) returnedPlayers.push(p);
+    }
     const newSet=new Set(newPlayers.map(p=>p.agr));
     const returnedSet=new Set(returnedPlayers.map(p=>p.agr));
 
