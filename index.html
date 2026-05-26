@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>G-CLUB · Open Golf Journeys</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="G-CLUB">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -481,7 +482,7 @@ footer p { font-size:11px; color:var(--ink3); font-family:'Barlow Condensed',san
   <!-- Если не настроен -->
   <div id="mySetup">
     <div class="my-setup">
-      <div style="margin-bottom:16px;"><div class="logo-mark" style="display:inline-flex;padding:8px 14px;"><span style="font-size:24px;">G</span></div></div>
+      <div style="margin-bottom:16px;"><div class="gc-logo-mark" style="width:48px;height:48px;border-radius:10px;"><span style="font-size:26px;">G</span></div></div>
       <p class="my-setup-title">Your Golf Journey</p>
       <p style="font-size:13px;color:var(--muted);margin-bottom:0;">Например: RU009590 — найди свой номер на hcp.rusgolf.ru</p>
       <div class="my-input-wrap">
@@ -623,41 +624,41 @@ function buildChart(ctx, isoLabels, values, existingPlugin) {
   const yearBandPlugin = {
     id: existingPlugin || ('yb_' + Math.random().toString(36).slice(2)),
     beforeDraw(chart) {
-      const {ctx: c, chartArea:{top,bottom}, scales:{x}} = chart;
+      const {ctx: c, chartArea:{left, right, top, bottom}, scales:{x}} = chart;
+      // Build year bands
       let curYr = null, bandStart = 0;
       const bands = [];
       years.forEach((yr, i) => {
         if (yr !== curYr) {
-          if (curYr !== null) bands.push({yr: curYr, from: bandStart, to: i - 1});
+          if (curYr !== null) bands.push({yr: curYr, from: bandStart, to: i});
           curYr = yr; bandStart = i;
         }
-        if (i === years.length - 1) bands.push({yr: curYr, from: bandStart, to: i});
+        if (i === years.length - 1) bands.push({yr: curYr, from: bandStart, to: i + 1});
       });
-      // odd years (25) = subtle gray, even (24,26) = white
-      bands.forEach(b => {
-        const x0 = x.getPixelForValue(b.from);
-        const x1 = x.getPixelForValue(b.to);
-        // 24→white, 25→gray, 26→white, 27→gray...
-        const isOdd = parseInt(b.yr) % 2 === 1;
-        c.fillStyle = isOdd ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0)';
+
+      const n = years.length - 1; // max index
+      bands.forEach((b, bi) => {
+        // First band starts at chart left edge, last ends at chart right edge
+        const x0 = bi === 0 ? left : x.getPixelForValue(b.from - 0.5);
+        const x1 = bi === bands.length - 1 ? right : x.getPixelForValue(b.to - 0.5);
+        const isOdd = parseInt(b.yr) % 2 === 1; // 25,27 → gray; 24,26 → white
+        c.fillStyle = isOdd ? 'rgba(0,0,0,0.04)' : 'rgba(0,0,0,0)';
         c.fillRect(x0, top, x1 - x0, bottom - top);
       });
-      // Тонкие вертикальные разделители между годами
-      let prevYr = null;
-      years.forEach((yr, i) => {
-        if (prevYr !== null && yr !== prevYr) {
-          const xPos = x.getPixelForValue(i - 0.5);
-          c.save();
-          c.strokeStyle = 'rgba(0,0,0,0.1)';
-          c.lineWidth = 0.5;
-          c.setLineDash([]);
-          c.beginPath();
-          c.moveTo(xPos, top);
-          c.lineTo(xPos, bottom);
-          c.stroke();
-          c.restore();
-        }
-        prevYr = yr;
+
+      // Thin vertical dividers at year boundaries
+      bands.forEach((b, bi) => {
+        if (bi === 0) return;
+        const xPos = x.getPixelForValue(b.from - 0.5);
+        c.save();
+        c.strokeStyle = 'rgba(0,0,0,0.08)';
+        c.lineWidth = 0.5;
+        c.setLineDash([]);
+        c.beginPath();
+        c.moveTo(xPos, top);
+        c.lineTo(xPos, bottom);
+        c.stroke();
+        c.restore();
       });
     }
   };
