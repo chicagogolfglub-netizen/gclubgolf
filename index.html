@@ -635,7 +635,7 @@ function switchTab(tab){
   document.getElementById('panel-search').classList.toggle('active',tab==='search');
   document.getElementById('panel-feed').classList.toggle('active',tab==='feed');
   document.getElementById('panel-my').classList.toggle('active',tab==='my');
-  if(tab==='feed'&&allData.length){buildFeed();updateFriendsCount();}
+  if(tab==='feed'&&allData.length){if(getFollows().length>0&&feedMode==='all'){switchFeedTab('friends');}else{buildFeed();updateFriendsCount();}}
   if(tab==='my'&&allData.length)loadMyProfile();
 }
 
