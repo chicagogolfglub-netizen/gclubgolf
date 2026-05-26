@@ -289,11 +289,15 @@ footer p{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(
 
     <!-- PDF загрузка -->
     <p class="section-label">Полная история из АГР</p>
-    <div class="pdf-upload-wrap" onclick="document.getElementById('pdfInput').click()">
-      <input type="file" id="pdfInput" accept=".pdf" onchange="handlePdfUpload(event)">
-      <div class="pdf-upload-label" id="pdfLabel">↑ Загрузить выписку PDF с hcp.rusgolf.ru</div>
-      <div class="pdf-status" id="pdfStatus"></div>
+    <div id="pdfStatus" class="pdf-status" style="display:none;margin-bottom:8px;"></div>
+    <div id="pasteSection">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">
+        Открой <strong>hcp.rusgolf.ru</strong> → найди себя → выдели всю таблицу раундов (Cmd+A) → скопируй (Cmd+C) → вставь сюда:
+      </p>
+      <textarea id="pdfPasteInput" placeholder="Вставь текст из выписки АГР сюда..." style="width:100%;height:120px;padding:12px;font-family:'Inter',sans-serif;font-size:13px;border:1px solid var(--line);background:#fff;resize:vertical;outline:none;color:var(--text);"></textarea>
+      <button onclick="handlePastedText()" style="margin-top:8px;background:var(--red);border:none;color:#fff;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;padding:10px 20px;">Загрузить историю</button>
     </div>
+    <div id="pdfLabel" style="display:none;"></div>
 
     <div class="chart-section">
       <p class="section-label">Динамика Handicap Index</p>
@@ -984,6 +988,18 @@ function saveMyProfile() {
   showMyProfile(match);
 }
 
+function resetPdfHistory() {
+  localStorage.removeItem('my_pdf_history');
+  localStorage.removeItem('my_pdf_ts');
+  const statusEl = document.getElementById('pdfStatus');
+  if (statusEl) statusEl.style.display = 'none';
+  const pasteSection = document.getElementById('pasteSection');
+  if (pasteSection) pasteSection.style.display = 'block';
+  const agr = localStorage.getItem('my_agr');
+  const p = allData.find(x => x.agr === agr);
+  if (p) showMyProfile(p);
+}
+
 function forceClearProfile() {
   localStorage.removeItem('my_agr');
   localStorage.removeItem('my_pdf_history');
@@ -1018,13 +1034,14 @@ function showMyProfile(player) {
   let h = [...player.history];
   try {
     const savedTs = localStorage.getItem('my_pdf_ts');
-    if (savedTs) {
-      const statusEl = document.getElementById('pdfStatus');
-      if (statusEl) {
-        statusEl.innerHTML = '✓ История из PDF · <span class="pdf-ts">' + savedTs + '</span>';
-        statusEl.classList.add('active');
-        document.getElementById('pdfLabel').textContent = '↑ Обновить выписку PDF';
-      }
+    const statusEl = document.getElementById('pdfStatus');
+    const pasteSection = document.getElementById('pasteSection');
+    if (savedTs && statusEl) {
+      statusEl.innerHTML = '✓ История загружена · <span class="pdf-ts">' + savedTs + '</span> · <button onclick="resetPdfHistory()" style="background:transparent;border:none;color:var(--muted);font-size:10px;cursor:pointer;text-decoration:underline;">Обновить</button>';
+      statusEl.style.display = 'block';
+      if (pasteSection) pasteSection.style.display = 'none';
+    } else {
+      if (pasteSection) pasteSection.style.display = 'block';
     }
   } catch(e) {}
   try {
@@ -1149,6 +1166,94 @@ function showMyProfile(player) {
 }
 
 // PDF парсинг
+function handlePastedText() {
+  const text = document.getElementById('pdfPasteInput').value.trim();
+  if (!text) { alert('Вставь текст из выписки АГР'); return; }
+  
+  const history = parseTextHistory(text);
+  if (!history.length) {
+    alert('Не удалось распознать раунды. Убедись что скопировал таблицу с hcp.rusgolf.ru');
+    return;
+  }
+  
+  const now = new Date();
+  const ts = now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
+  localStorage.setItem('my_pdf_history', JSON.stringify(history));
+  localStorage.setItem('my_pdf_ts', ts);
+  
+  const statusEl = document.getElementById('pdfStatus');
+  statusEl.innerHTML = '✓ Загружено ' + history.length + ' раундов · <span class="pdf-ts">' + ts + '</span>';
+  statusEl.style.display = 'block';
+  document.getElementById('pasteSection').style.display = 'none';
+  
+  const agr = localStorage.getItem('my_agr');
+  const p = allData.find(x => x.agr === agr);
+  if (p) showMyProfile(p);
+}
+
+function parseTextHistory(text) {
+  // Парсим текст скопированный из hcp.rusgolf.ru
+  // Формат строки: DD.MM.YYYY [турнир] [клуб] [формат] SR CR Par Score AGS Stbl PCC SD [Exc] [HI_rev] HI_final
+  const rounds = [];
+  const lines = text.split(/\n/).map(l => l.trim()).filter(Boolean);
+  
+  for (const line of lines) {
+    // Ищем дату в начале строки
+    const dateMatch = line.match(/^(\d{2})\.(\d{2})\.(\d{4})/);
+    if (!dateMatch) continue;
+    
+    const dateISO = dateMatch[3] + '-' + dateMatch[2] + '-' + dateMatch[1];
+    
+    // Все числа в строке
+    const allNums = [];
+    const numRe = /\b(\d{1,3}[,.]\d{1})\b|\b(\d{2,3})\b/g;
+    let nm;
+    while ((nm = numRe.exec(line)) !== null) {
+      const val = nm[1] ? parseFloat(nm[1].replace(',','.')) : parseInt(nm[2]);
+      allNums.push(val);
+    }
+    
+    // HI финальный = последнее десятичное число 0 < x < 60
+    const decimals = allNums.filter(n => n !== Math.floor(n) && n > 0 && n < 60);
+    if (!decimals.length) continue;
+    const hi = decimals[decimals.length - 1];
+    
+    // Score = целое 60-160
+    const ints = allNums.filter(n => n === Math.floor(n));
+    const score = ints.find(n => n >= 60 && n <= 160) || null;
+    
+    // Stbl = целое 0-60, после score
+    let stbl = null;
+    if (score) {
+      const si = ints.indexOf(score);
+      for (let j = si+1; j < ints.length; j++) {
+        if (ints[j] >= 0 && ints[j] <= 60) { stbl = ints[j]; break; }
+      }
+    }
+    
+    // Формат СФД/ИСУ
+    const fmtMatch = line.match(/(СФД|ИСУ|SFD|ISU)-?(\d+)/);
+    const format = fmtMatch ? fmtMatch[0] : '';
+    
+    // Турнир и клуб — текст после даты до формата
+    let tournament = '', club = '';
+    if (fmtMatch) {
+      const fmtIdx = line.indexOf(fmtMatch[0]);
+      const between = line.slice(dateMatch[0].length, fmtIdx).trim();
+      const parts = between.split(/\s{2,}/).map(s=>s.trim()).filter(Boolean);
+      if (parts.length >= 2) { tournament = parts[0]; club = parts[parts.length-1]; }
+      else if (parts.length === 1) { tournament = parts[0]; }
+    }
+    
+    rounds.push({ date: dateISO, hi, score, stbl, tournament, club, format });
+  }
+  
+  // Убираем дубли
+  const seen = new Set();
+  return rounds.filter(r => { if(seen.has(r.date))return false; seen.add(r.date); return true; })
+               .sort((a,b) => a.date.localeCompare(b.date));
+}
+
 async function handlePdfUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
