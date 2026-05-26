@@ -208,7 +208,7 @@ footer p{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(
       <div class="agr-badge-bottom"><p>Игрок не активен в реестре АГР в 2026 году</p></div>
     </div>
     <div class="gindex-badge good" id="gindexBadge">
-      <span class="badge-label">G-INDEX</span>
+      <span class="badge-label">G-CLUB</span>
       <span class="badge-value" id="gindexValue">—</span>
       <span class="badge-sub">Лучший результат за всю историю</span>
       <span class="badge-stale-note" id="gindexStaleNote" style="display:none"></span>
@@ -273,7 +273,7 @@ footer p{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(
       <div class="meta-row" id="myMeta"></div>
     </div>
     <div class="gindex-badge good" id="myGindexBadge">
-      <span class="badge-label">G-INDEX</span>
+      <span class="badge-label">G-CLUB</span>
       <span class="badge-value" id="myGindexValue">—</span>
       <span class="badge-sub">Лучший результат за всю историю</span>
       <span class="badge-stale-note" id="myStaleNote" style="display:none"></span>
@@ -805,7 +805,8 @@ function isFollowing(agr) {
 
 function toggleFollow() {
   if (!currentProfileAgr) return;
-  const myAgr = localStorage.getItem('my_agr') || 'RU009590';
+  const myAgr = localStorage.getItem('my_agr');
+  if (!myAgr) return;
   if (currentProfileAgr === myAgr) return; // нельзя подписаться на себя
   let follows = getFollows();
   if (follows.includes(currentProfileAgr)) {
@@ -822,7 +823,8 @@ function toggleFollow() {
 function updateFollowBtn() {
   const btn = document.getElementById('followBtn');
   if (!btn || !currentProfileAgr) return;
-  const myAgr = localStorage.getItem('my_agr') || 'RU009590';
+  const myAgr = localStorage.getItem('my_agr');
+  if (!myAgr) return;
   if (currentProfileAgr === myAgr) {
     btn.style.display = 'none';
     return;
@@ -1124,7 +1126,8 @@ async function handlePdfUpload(event) {
     document.getElementById('pdfStatus').innerHTML = '✓ Загружено ' + history.length + ' раундов · <span class="pdf-ts">' + ts + '</span>';
     document.getElementById('pdfStatus').classList.add('active');
     document.getElementById('pdfLabel').textContent = '↑ Обновить выписку PDF';
-    const agr = localStorage.getItem('my_agr') || 'RU009590';
+    const agr = localStorage.getItem('my_agr');
+    if (!agr) return;
     const p = allData.find(x => x.agr === agr);
     if (p) showMyProfile(p);
   } catch(e) {
