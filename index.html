@@ -353,9 +353,9 @@ const TIMAKOV_HISTORY = [
 
 // Принудительная очистка всех данных (версия 3)
 (function(){
-  if(localStorage.getItem('app_version') !== '3') {
+  if(localStorage.getItem('app_version') !== '4') {
     localStorage.clear(); // чистим вообще всё
-    localStorage.setItem('app_version','3');
+    localStorage.setItem('app_version','4');
   }
 })();
 
