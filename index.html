@@ -1037,9 +1037,10 @@ function showMyProfile(player) {
   // Объединяем историю из Pivot + раунды из PDF/хардкод
   let h = [...player.history];
   
-  // Для RU009590 — всегда загружаем полную историю
+  // Загружаем историю раундов
   let pdfRounds = [];
-  if (player.agr === 'RU009590') {
+  const myAgr = localStorage.getItem('my_agr') || 'RU009590';
+  if (myAgr === 'RU009590' || player.agr === 'RU009590') {
     pdfRounds = TIMAKOV_HISTORY;
   } else {
     try { pdfRounds = JSON.parse(localStorage.getItem('my_pdf_history') || '[]'); } catch(e) {}
@@ -1113,27 +1114,17 @@ function showMyProfile(player) {
   const bestHI = gindex;
   let tableRows = [];
   
-  try {
-    const pdfHist = JSON.parse(localStorage.getItem('my_pdf_history') || '[]');
-    if (pdfHist.length) {
-      // Полная история из PDF — все раунды
-      tableRows = pdfHist.slice().reverse();
-      document.getElementById('myHistoryTable').querySelector('thead tr').innerHTML =
-        '<th>Дата</th><th>Турнир · Поле</th><th>Формат</th><th>Гросс</th><th>Stbl</th><th>HI</th><th>Δ</th>';
-    } else {
-      // Только Pivot — упрощённая таблица
-      const filtered = h.filter((d,i) => i===0 || d.date===h[h.length-1].date || d.hi!==h[i-1].hi);
-      tableRows = filtered.slice().reverse();
-      document.getElementById('myHistoryTable').querySelector('thead tr').innerHTML =
-        '<th>Дата</th><th>HI</th><th>Изменение</th>';
-    }
-  } catch(e) {
-    const filtered = h.filter((d,i) => i===0 || d.date===h[h.length-1].date || d.hi!==h[i-1].hi);
-    tableRows = filtered.slice().reverse();
+  // Таблица — всегда показываем pdfRounds если есть (с турниром/полем)
+  if (pdfRounds.length) {
+    tableRows = [...pdfRounds].reverse();
+    document.getElementById('myHistoryTable').querySelector('thead tr').innerHTML =
+      '<th>Дата</th><th>Турнир</th><th>Поле</th><th>Гросс</th><th>Stbl</th><th>HI</th><th>Δ</th>';
+  } else {
+    tableRows = h.slice().reverse();
+    document.getElementById('myHistoryTable').querySelector('thead tr').innerHTML =
+      '<th>Дата</th><th>HI</th><th>Изменение</th>';
   }
-  
-  const pdfLoaded = !!localStorage.getItem('my_pdf_history');
-  
+
   document.getElementById('myHistoryBody').innerHTML = tableRows.map((d,i,arr) => {
     const prev = arr[i+1];
     const curHIval = d.hi;
@@ -1145,13 +1136,13 @@ function showMyProfile(player) {
     }
     const isBest = Math.abs(curHIval - bestHI) < 0.001;
     
-    if (pdfLoaded && d.tournament !== undefined) {
+    if (pdfRounds.length && d.tournament !== undefined) {
       return `<tr class="${isBest?'best-row':''}">
         <td class="td-date">${fmtDate(d.date)}</td>
-        <td><div class="td-tournament">${d.tournament||'—'}</div><div class="td-club">${d.club||''}</div></td>
-        <td class="td-format">${d.format||''}</td>
+        <td class="td-tournament">${d.tournament||'—'}</td>
+        <td style="font-size:11px;color:var(--muted);">${d.club||'—'}</td>
         <td class="td-date">${d.score||'—'}</td>
-        <td class="td-date">${d.stbl!==null&&d.stbl!==undefined?d.stbl:'—'}</td>
+        <td class="td-date">${d.stbl!=null?d.stbl:'—'}</td>
         <td class="td-hi">${fmtHI(curHIval)}</td>
         <td class="td-delta ${dc}">${deltaStr}</td>
       </tr>`;
