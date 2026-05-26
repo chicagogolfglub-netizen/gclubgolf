@@ -48,8 +48,8 @@ header {
 }
 .gc-logo-mark span {
   font-family:'Barlow Condensed',sans-serif;
-  font-weight:700; font-size:14px;
-  color:#fff; letter-spacing:0.1em;
+  font-weight:700; font-size:18px;
+  color:#fff; letter-spacing:0;
 }
 .gc-logo-name {
   font-family:'Barlow Condensed',sans-serif;
@@ -381,7 +381,7 @@ footer p { font-size:11px; color:var(--ink3); font-family:'Barlow Condensed',san
 <!-- HEADER -->
 <header>
   <div class="gc-logo">
-    <div class="gc-logo-mark"><span>GC</span></div>
+    <div class="gc-logo-mark"><span>G</span></div>
     <div>
       <div class="gc-logo-name">G-CLUB</div>
       <div class="gc-logo-sub">Open Golf Journeys</div>
@@ -481,7 +481,7 @@ footer p { font-size:11px; color:var(--ink3); font-family:'Barlow Condensed',san
   <!-- Если не настроен -->
   <div id="mySetup">
     <div class="my-setup">
-      <div style="margin-bottom:16px;"><div class="logo-mark" style="display:inline-flex;padding:8px 14px;"><span style="font-size:24px;">GC</span></div></div>
+      <div style="margin-bottom:16px;"><div class="logo-mark" style="display:inline-flex;padding:8px 14px;"><span style="font-size:24px;">G</span></div></div>
       <p class="my-setup-title">Your Golf Journey</p>
       <p style="font-size:13px;color:var(--muted);margin-bottom:0;">Например: RU009590 — найди свой номер на hcp.rusgolf.ru</p>
       <div class="my-input-wrap">
@@ -607,6 +607,132 @@ const RETURN_GAP_DAYS=14; // перерыв в данных — "снова в �
 
 let allData=[];
 let allDates=[];
+
+// ── ОБЩИЙ ПОМОЩНИК ДЛЯ ГРАФИКОВ ─────────────────────────────
+function buildChart(ctx, isoLabels, values, existingPlugin) {
+  const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  const shortLabel = iso => {
+    const [y,m] = iso.split('-');
+    return months[parseInt(m)-1] + ' ' + y.slice(2);
+  };
+
+  // Год каждой точки (двузначный)
+  const years = isoLabels.map(iso => iso.slice(2,4)); // '24','25','26'
+
+  // Year band plugin — чередование белый/серый/белый
+  const yearBandPlugin = {
+    id: existingPlugin || ('yb_' + Math.random().toString(36).slice(2)),
+    beforeDraw(chart) {
+      const {ctx: c, chartArea:{top,bottom}, scales:{x}} = chart;
+      let curYr = null, bandStart = 0;
+      const bands = [];
+      years.forEach((yr, i) => {
+        if (yr !== curYr) {
+          if (curYr !== null) bands.push({yr: curYr, from: bandStart, to: i - 1});
+          curYr = yr; bandStart = i;
+        }
+        if (i === years.length - 1) bands.push({yr: curYr, from: bandStart, to: i});
+      });
+      // odd years (25) = subtle gray, even (24,26) = white
+      bands.forEach(b => {
+        const x0 = x.getPixelForValue(b.from);
+        const x1 = x.getPixelForValue(b.to);
+        // 24→white, 25→gray, 26→white, 27→gray...
+        const isOdd = parseInt(b.yr) % 2 === 1;
+        c.fillStyle = isOdd ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0)';
+        c.fillRect(x0, top, x1 - x0, bottom - top);
+      });
+      // Тонкие вертикальные разделители между годами
+      let prevYr = null;
+      years.forEach((yr, i) => {
+        if (prevYr !== null && yr !== prevYr) {
+          const xPos = x.getPixelForValue(i - 0.5);
+          c.save();
+          c.strokeStyle = 'rgba(0,0,0,0.1)';
+          c.lineWidth = 0.5;
+          c.setLineDash([]);
+          c.beginPath();
+          c.moveTo(xPos, top);
+          c.lineTo(xPos, bottom);
+          c.stroke();
+          c.restore();
+        }
+        prevYr = yr;
+      });
+    }
+  };
+
+  // Segment colors — solid, no dashes
+  const segColor = c => {
+    const i = c.p1DataIndex;
+    if (i === 0) return '#888';
+    return values[i] < values[i-1] ? '#0050E6' : values[i] > values[i-1] ? '#C2001A' : '#AAAAAA';
+  };
+  const ptColors = values.map((v, i) => {
+    if (i === 0) return '#111';
+    return v < values[i-1] ? '#0050E6' : v > values[i-1] ? '#C2001A' : '#AAAAAA';
+  });
+
+  return new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: isoLabels.map(shortLabel),
+      datasets: [{
+        data: values,
+        borderWidth: 0.75,
+        segment: { borderColor: segColor, borderDash: () => [] },
+        pointBackgroundColor: ptColors,
+        pointRadius: 2.5,
+        pointHoverRadius: 5,
+        pointBorderWidth: 0,
+        tension: 0.35,
+        fill: false
+      }]
+    },
+    plugins: [yearBandPlugin],
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      animation: { duration: 300 },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#111',
+          titleColor: 'rgba(255,255,255,0.45)',
+          bodyColor: '#fff',
+          titleFont: { family: 'Inter', size: 11, weight: '400' },
+          bodyFont: { family: 'Barlow Condensed', size: 22, weight: '700' },
+          padding: 12, cornerRadius: 8,
+          callbacks: {
+            title: items => items[0].label,
+            label: item => 'HI  ' + fmtHI(item.raw)
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: '#AAAAAA',
+            font: { family: 'Barlow Condensed', size: 11, weight: '500' },
+            maxRotation: 0, maxTicksLimit: 8
+          },
+          grid: { display: false },
+          border: { display: false }
+        },
+        y: {
+          ticks: {
+            color: '#AAAAAA',
+            font: { family: 'Inter', size: 11 },
+            callback: v => Number(v).toFixed(1)
+          },
+          grid: { display: false },
+          border: { display: false }
+        }
+      }
+    }
+  });
+}
+// ────────────────────────────────────────────────────────────
+
 let chartInstance=null;
 
 // ── УТИЛИТЫ ─────────────────────────────────────────────────
@@ -1007,38 +1133,7 @@ function showProfile(player){
   const labels=pts.map(d=>fmtDate(d.date));
   const values=pts.map(d=>d.hi);
   const ptDates=pts.map(d=>String(d.date));
-  const gapSet=new Set();
-  for(let i=1;i<ptDates.length;i++){
-    if(ptDates[i-1].startsWith('2025')&&ptDates[i].startsWith('2026'))gapSet.add(i);
-  }
-
-  chartInstance=new Chart(ctx,{
-    type:'line',
-    data:{labels,datasets:[{
-      data:values,borderWidth:1.5,
-      segment:{
-        borderColor:c=>{const i=c.p1DataIndex;return values[i]<values[i-1]?'#1A56DB':values[i]>values[i-1]?'#C2001A':'#8a8880';},
-        borderDash:c=>gapSet.has(c.p1DataIndex)?[5,4]:[]
-      },
-      pointBackgroundColor:values.map((v,i)=>i===0?'#1A1A18':v<values[i-1]?'#1A56DB':v>values[i-1]?'#C2001A':'#8a8880'),
-      pointRadius:3,pointHoverRadius:5,pointBorderWidth:0,tension:0.3,fill:false
-    }]},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{
-        legend:{display:false},
-        tooltip:{
-          backgroundColor:'#1A1A18',titleColor:'#F4F1EB',bodyColor:'#F4F1EB',
-          titleFont:{family:'Inter',size:11},bodyFont:{family:'Inter',size:18,weight:'300'},
-          callbacks:{title:items=>fmtDate(items[0].label),label:item=>`HI ${fmtHI(item.raw)}`}
-        }
-      },
-      scales:{
-        x:{ticks:{color:'#8a8880',font:{family:'Inter',size:10},maxRotation:45},grid:{color:'rgba(26,26,24,0.05)'}},
-        y:{ticks:{color:'#8a8880',font:{family:'Inter',size:11},callback:v=>Number(v).toFixed(1)},grid:{color:'rgba(26,26,24,0.05)'}}
-      }
-    }
-  });
+  chartInstance = buildChart(ctx, ptDates, values, 'searchYB');
 
   const tbody=document.getElementById('historyBody');
   const filtered=h.filter((d,i)=>i===0||d.date===lastDate||d.hi!==h[i-1].hi);
@@ -1454,61 +1549,8 @@ function showMyProfile(player) {
   const labels = pts.map(d => fmtDate(d.date));
   const values = pts.map(d => d.hi);
 
-  const myYearBands = [];
-  let myCurYear = null, myBandStart = 0;
-  labels.forEach((l, i) => {
-    const yr = l.slice(-2);
-    if(yr !== myCurYear) {
-      if(myCurYear !== null) myYearBands.push({year: myCurYear, from: myBandStart, to: i-1});
-      myCurYear = yr; myBandStart = i;
-    }
-    if(i === labels.length-1) myYearBands.push({year: myCurYear, from: myBandStart, to: i});
-  });
-  const myYearBgPlugin = {
-    id:'myYearBg',
-    beforeDraw(chart){
-      const {ctx, chartArea:{left,right,top,bottom}, scales:{x}} = chart;
-      myYearBands.forEach(b => {
-        const x0 = x.getPixelForValue(b.from);
-        const x1 = x.getPixelForValue(b.to);
-        ctx.fillStyle = b.year <= '25' ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0)';
-        ctx.fillRect(x0, top, x1-x0, bottom-top);
-      });
-    }
-  };
-
-  const months2 = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-  const fmtML = iso => { const [y,m,d] = iso.split('-'); return months2[parseInt(m)-1]+' '+y.slice(2); };
-
-  myChartInstance = new Chart(ctx, {
-    type:'line',
-    data:{labels:labels.map(l=>fmtML(l)),datasets:[{
-      data:values, borderWidth:1,
-      segment:{borderColor:c=>{const i=c.p1DataIndex;return values[i]<values[i-1]?'#1A56DB':values[i]>values[i-1]?'#C2001A':'#8a8880';}},
-      pointBackgroundColor:values.map((v,i)=>i===0?'#000':v<values[i-1]?'#1A56DB':v>values[i-1]?'#C2001A':'#8a8880'),
-      pointRadius:2.5, pointHoverRadius:5, pointBorderWidth:0, tension:0.3, fill:false
-    }]},
-    plugins:[myYearBgPlugin],
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{
-        legend:{display:false},
-        tooltip:{
-          backgroundColor:'#0A0A0A',
-          titleColor:'rgba(255,255,255,0.5)',
-          bodyColor:'#fff',
-          titleFont:{family:'Inter',size:11,weight:'500'},
-          bodyFont:{family:'Barlow Condensed',size:22,weight:'700'},
-          padding:12,
-          callbacks:{title:items=>items[0].label,label:item=>'HI  '+fmtHI(item.raw)}
-        }
-      },
-      scales:{
-        x:{ticks:{color:'#9A9A9A',font:{family:'Barlow Condensed',size:11,weight:'500'},maxRotation:0},grid:{display:false},border:{display:false}},
-        y:{ticks:{color:'#9A9A9A',font:{family:'Inter',size:11},callback:v=>Number(v).toFixed(1)},grid:{color:'rgba(0,0,0,0.04)',lineWidth:0.5},border:{display:false}}
-      }
-    }
-  });
+  const myIsoDates = pts.map(d => d.date);
+  myChartInstance = buildChart(ctx, myIsoDates, values, 'myYB');
 
   // History table — показываем ВСЕ раунды из PDF, или только точки изменений из Pivot
   const bestHI = gindex;
