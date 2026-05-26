@@ -1106,19 +1106,27 @@ function showProfile(player){
   if(gRight) gRight.style.display='none';
   if(gBest) gBest.style.display='none';
 
+  const diffFromBest = gindex !== null ? parseFloat((curHI - gindex).toFixed(1)) : 0;
+
   if(player.stale){
     badge.className='gindex-badge stale';
     staleNote.style.display='block';
     staleNote.textContent=`Stale · ${daysSince(player.lastChangeDate)} days`;
-  } else if(gindex!==null && Math.abs(curHI-gindex)<0.001){
+    if(diffFromBest > 0.001 && gRight && gDelta){
+      gDelta.textContent = '+' + diffFromBest.toFixed(1);
+      gRight.style.display = 'block';
+    } else if(gBest) {
+      gBest.style.display = 'block';
+    }
+  } else if(diffFromBest <= 0.001){
     badge.className='gindex-badge good';
     staleNote.style.display='none';
     if(gBest) gBest.style.display='block';
   } else {
-    badge.className=(gindex!==null&&curHI>gindex)?'gindex-badge bad':'gindex-badge good';
+    badge.className='gindex-badge bad';
     staleNote.style.display='none';
-    if(gindex!==null && curHI>gindex && gRight && gDelta){
-      gDelta.textContent='+' + (curHI-gindex).toFixed(1);
+    if(gRight && gDelta){
+      gDelta.textContent='+' + diffFromBest.toFixed(1);
       gRight.style.display='block';
     }
   }
