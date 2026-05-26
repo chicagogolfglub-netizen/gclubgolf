@@ -1240,8 +1240,7 @@ function parsePdfHistory(text) {
       const fmtIdx = chunk.indexOf(fmtMatch[0]);
       const between = chunk.slice(pos.raw.length, fmtIdx).trim();
       // Разбиваем: слова до последнего "гольф" упоминания = поле
-      const words = between.split(/\s{2,}|
-/).map(s => s.trim()).filter(Boolean);
+      const words = between.split(/\s{2,}/).map(s => s.trim()).filter(Boolean);
       if (words.length >= 2) {
         club = words[words.length - 1];
         tournament = words.slice(0, -1).join(' ');
