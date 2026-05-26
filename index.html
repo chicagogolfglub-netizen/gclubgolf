@@ -1059,7 +1059,8 @@ function showMyProfile(player) {
   }
 
   const curHI = h[h.length-1].hi;
-  const firstHI = h[0].hi;
+  // За период — от первого раунда в PDF до текущего
+  const firstHI = pdfRounds.length ? pdfRounds[0].hi : h[0].hi;
   const delta = (curHI - firstHI).toFixed(1);
   const gindex = Math.min(...h.map(x=>x.hi));
 
