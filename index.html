@@ -213,12 +213,18 @@ footer p{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(
       <thead><tr><th>Дата</th><th>HI</th><th>Изменение</th></tr></thead>
       <tbody id="historyBody"></tbody>
     </table>
+    <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--line);">
+      <button class="follow-btn" id="followBtn" onclick="toggleFollow()"></button>
+    </div>
   </div>
 </div>
 
 <!-- ЛЕНТА -->
 <div class="panel" id="panel-feed">
-  <p class="tagline">События последних 7 дней</p>
+  <div style="display:flex;gap:0;border-bottom:1px solid var(--line);margin-bottom:24px;">
+    <div class="feed-sub-tab active" id="feedTabAll" onclick="switchFeedTab('all')" style="font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding:10px 20px 10px 0;cursor:pointer;border-bottom:2px solid var(--red);margin-bottom:-1px;color:var(--text);">Все</div>
+    <div class="feed-sub-tab" id="feedTabFriends" onclick="switchFeedTab('friends')" style="font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding:10px 20px 10px 0;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;">Друзья <span id="friendsCount" style="font-size:9px;color:var(--muted);"></span></div>
+  </div>
   <div class="feed-loading" id="feedLoading">Загружаем ленту...</div>
   <div id="feedContent"></div>
 </div>
@@ -418,6 +424,10 @@ function buildFeed(){
 
   let html='';
 
+  // Фильтр по друзьям
+  const follows = getFollows();
+  const filterByFriends = feedMode === 'friends';
+
   for(const date of feedDates){
     const dateIdx=allDates.indexOf(date);
     // Предыдущая дата В ДАННЫХ (не обязательно вчера — может быть 22.05 перед 26.05)
@@ -425,11 +435,15 @@ function buildFeed(){
     // Сколько календарных дней между датами
     const calGap=prevDate?daysBetweenISO(prevDate,date):0;
 
+    // Фильтруем по подпискам если режим "Друзья"
+    const playerFilter = p => !filterByFriends || follows.includes(p.agr);
+
     // 1. НОВЫЕ и СНОВА В АГР
     const newPlayers=[];
     const returnedPlayers=[];
 
     for(const p of allData){
+      if(!playerFilter(p))continue;
       if(!p.agr.startsWith('RU'))continue;
       const hasOnDate=p.presentDates.has(date);
       if(!hasOnDate)continue;
@@ -549,8 +563,12 @@ function buildFeed(){
   }
 
   document.getElementById('feedLoading').style.display='none';
+  updateFriendsCount();
+  const emptyMsg = filterByFriends && follows.length === 0
+    ? '<div style="font-size:13px;color:var(--muted);padding:20px 0">Ты ещё ни за кем не следишь. Найди игрока и нажми "+ Следить"</div>'
+    : '<div style="font-size:13px;color:var(--muted);padding:20px 0">Событий за последние 7 дней нет</div>';
   document.getElementById('feedContent').innerHTML=html||
-    '<div style="font-size:13px;color:var(--muted);padding:20px 0">Событий за последние 7 дней нет</div>';
+    emptyMsg;
 }
 
 // ── НАВИГАЦИЯ ───────────────────────────────────────────────
@@ -561,7 +579,7 @@ function switchTab(tab){
   document.getElementById('panel-search').classList.toggle('active',tab==='search');
   document.getElementById('panel-feed').classList.toggle('active',tab==='feed');
   document.getElementById('panel-my').classList.toggle('active',tab==='my');
-  if(tab==='feed'&&allData.length)buildFeed();
+  if(tab==='feed'&&allData.length){buildFeed();updateFriendsCount();}
   if(tab==='my'&&allData.length)loadMyProfile();
 }
 
@@ -726,6 +744,8 @@ function showProfile(player){
     </tr>`;
   }).join('');
 
+  currentProfileAgr = player.agr;
+  updateFollowBtn();
   document.getElementById('profile').classList.add('active');
   document.getElementById('searchBtn').textContent='Сбросить';
   document.getElementById('profile').scrollIntoView({behavior:'smooth',block:'start'});
@@ -740,14 +760,82 @@ document.addEventListener('click',e=>{
 });
 
 
+
+// ── ПОДПИСКИ ────────────────────────────────────────────────
+let currentProfileAgr = null;
+let feedMode = 'all';
+
+function getFollows() {
+  try { return JSON.parse(localStorage.getItem('follows') || '[]'); } catch(e) { return []; }
+}
+
+function saveFollows(list) {
+  localStorage.setItem('follows', JSON.stringify(list));
+}
+
+function isFollowing(agr) {
+  return getFollows().includes(agr);
+}
+
+function toggleFollow() {
+  if (!currentProfileAgr) return;
+  const myAgr = localStorage.getItem('my_agr') || 'RU009590';
+  if (currentProfileAgr === myAgr) return; // нельзя подписаться на себя
+  let follows = getFollows();
+  if (follows.includes(currentProfileAgr)) {
+    follows = follows.filter(a => a !== currentProfileAgr);
+  } else {
+    follows.push(currentProfileAgr);
+  }
+  saveFollows(follows);
+  updateFollowBtn();
+  // обновляем счётчик друзей
+  updateFriendsCount();
+}
+
+function updateFollowBtn() {
+  const btn = document.getElementById('followBtn');
+  if (!btn || !currentProfileAgr) return;
+  const myAgr = localStorage.getItem('my_agr') || 'RU009590';
+  if (currentProfileAgr === myAgr) {
+    btn.style.display = 'none';
+    return;
+  }
+  btn.style.display = 'inline-block';
+  if (isFollowing(currentProfileAgr)) {
+    btn.textContent = '✓ Слежу';
+    btn.classList.add('following');
+  } else {
+    btn.textContent = '+ Следить';
+    btn.classList.remove('following');
+  }
+}
+
+function updateFriendsCount() {
+  const n = getFollows().length;
+  const el = document.getElementById('friendsCount');
+  if (el) el.textContent = n > 0 ? '(' + n + ')' : '';
+}
+
+function switchFeedTab(mode) {
+  feedMode = mode;
+  document.getElementById('feedTabAll').style.borderBottomColor = mode==='all' ? 'var(--red)' : 'transparent';
+  document.getElementById('feedTabAll').style.color = mode==='all' ? 'var(--text)' : 'var(--muted)';
+  document.getElementById('feedTabFriends').style.borderBottomColor = mode==='friends' ? 'var(--red)' : 'transparent';
+  document.getElementById('feedTabFriends').style.color = mode==='friends' ? 'var(--text)' : 'var(--muted)';
+  buildFeed();
+}
+
 // ── МОЙ ПРОФИЛЬ ─────────────────────────────────────────────
 let myChartInstance = null;
 
 function loadMyProfile() {
-  const agr = localStorage.getItem('my_agr');
-  if (!agr || !allData.length) return;
+  // По умолчанию — Denis Timakov RU009590
+  const agr = localStorage.getItem('my_agr') || 'RU009590';
+  if (!allData.length) return;
   const p = allData.find(x => x.agr === agr);
   if (!p) return;
+  localStorage.setItem('my_agr', agr); // сохраняем
   showMyProfile(p);
 }
 
