@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>G-INDEX · Open Golf Journeys</title>
+<title>G-CLUB · Open Golf Journeys</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="G-INDEX">
+<meta name="apple-mobile-web-app-title" content="G-CLUB">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;1,300&family=Cormorant:ital,wght@0,300;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#F4F1EB;--bg2:#EAE7E0;--text:#1A1A18;--muted:#8a8880;--red:#C2001A;--blue:#1A56DB;--green:#1A7A3C;--line:rgba(26,26,24,0.1);}
@@ -121,6 +121,11 @@ footer{padding:24px;border-top:1px solid var(--line);display:flex;align-items:ce
 footer p{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);}
 
 /* МОЙ ПРОФИЛЬ */
+#myHistoryTable th, #myHistoryTable td { white-space:nowrap; }
+#myHistoryTable th:nth-child(2), #myHistoryTable td:nth-child(2) { white-space:normal; min-width:180px; max-width:260px; }
+.td-tournament { font-size:12px; font-weight:400; }
+.td-club { font-size:10px; color:var(--muted); margin-top:2px; }
+.td-format { font-size:10px; color:var(--muted); }
 .my-setup{background:#fff;padding:24px;margin-bottom:24px;}
 .my-setup-title{font-size:10px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
 .my-input-wrap{display:flex;border-bottom:2px solid var(--text);margin-bottom:20px;}
@@ -141,6 +146,15 @@ footer p{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(
 .my-profile-active{display:none;}
 .my-profile-active.active{display:block;animation:fadeUp .35s ease;}
 .my-badge{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:#fff;padding:4px 10px;font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px;}
+.friends-item{display:flex;align-items:center;gap:12px;padding:12px 18px;background:#fff;border-bottom:1px solid var(--line);}
+.friends-item:last-child{border-bottom:none;}
+.friends-item-info{flex:1;cursor:pointer;}
+.friends-item-name{font-size:14px;font-weight:400;}
+.friends-item-agr{font-size:10px;color:var(--muted);margin-top:1px;}
+.friends-item-hi{font-size:15px;font-weight:400;color:var(--muted);}
+.friends-remove{background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px 8px;line-height:1;}
+.friends-remove:hover{color:var(--red);}
+.pdf-ts{font-size:10px;color:var(--muted);letter-spacing:.1em;margin-top:4px;}
 .follow-btn{background:transparent;border:1px solid var(--line);color:var(--muted);font-family:'Inter',sans-serif;font-size:10px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;padding:6px 14px;transition:all .2s;}
 .follow-btn.following{border-color:var(--text);color:var(--text);}
 .follow-btn:hover{border-color:var(--red);color:var(--red);}
@@ -155,7 +169,7 @@ footer p{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(
 <body>
 <header>
   <div class="logo-g">G</div>
-  <div class="logo-text"><h1>G-INDEX</h1><p>Open Golf Journeys</p></div>
+  <div class="logo-text"><h1>G-CLUB</h1><p>Open Golf Journeys</p></div>
 </header>
 <nav class="nav-tabs">
   <div class="nav-tab active" onclick="switchTab('search')">Поиск</div>
@@ -238,14 +252,15 @@ footer p{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(
   <div id="mySetup">
     <div class="my-setup">
       <p class="my-setup-title">Введи свой АГР номер</p>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">Например: RU009590 — найди свой номер на hcp.rusgolf.ru</p>
       <div class="my-input-wrap">
-        <input type="text" id="myAgrInput" placeholder="RU009590" autocomplete="off" oninput="previewMyAgr()">
+        <input type="text" id="myAgrInput" placeholder="RU009590" autocomplete="off" oninput="previewMyAgr()" onkeydown="if(event.key==='Enter')saveMyProfile()">
       </div>
       <div class="my-preview" id="myPreview">
         <div class="my-preview-name" id="myPreviewName"></div>
         <div class="my-preview-agr" id="myPreviewAgr"></div>
       </div>
-      <button class="my-btn" onclick="saveMyProfile()">Это я</button>
+      <button class="my-btn" onclick="saveMyProfile()">Это я →</button>
     </div>
   </div>
 
@@ -281,11 +296,22 @@ footer p{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(
       <p class="section-label">Динамика Handicap Index</p>
       <div class="chart-container"><canvas id="myChart"></canvas></div>
     </div>
-    <p class="section-label">История</p>
-    <table class="history-table">
-      <thead><tr><th>Дата</th><th>HI</th><th>Изменение</th></tr></thead>
+    <p class="section-label">История раундов</p>
+    <div style="overflow-x:auto;">
+    <table class="history-table" id="myHistoryTable">
+      <thead><tr><th>Дата</th><th>Турнир · Поле</th><th>Формат</th><th>Гросс</th><th>Stbl</th><th>HI</th><th>Δ</th></tr></thead>
       <tbody id="myHistoryBody"></tbody>
     </table>
+    </div>
+    <!-- Список друзей -->
+    <div style="margin-top:32px;" id="myFriendsList">
+      <p class="section-label">Друзья <span id="myFriendsCount"></span></p>
+      <div id="myFriendsBody"></div>
+      <div id="myFriendsEmpty" style="display:none;font-size:12px;color:var(--muted);padding:12px 0;">
+        Ты ещё никого не добавил. Найди игрока в поиске и нажми "+ Следить"
+      </div>
+    </div>
+
     <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--line);">
       <button class="my-btn-sec" onclick="resetMyProfile()">Сменить профиль</button>
     </div>
@@ -294,7 +320,7 @@ footer p{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(
 
 <footer>
   <div class="footer-g">G</div>
-  <p>G-INDEX · Open Golf Journeys · 2026</p>
+  <p>G-CLUB · Open Golf Journeys · 2026</p>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -789,8 +815,8 @@ function toggleFollow() {
   }
   saveFollows(follows);
   updateFollowBtn();
-  // обновляем счётчик друзей
   updateFriendsCount();
+  renderFriendsList();
 }
 
 function updateFollowBtn() {
@@ -809,6 +835,54 @@ function updateFollowBtn() {
     btn.textContent = '+ Следить';
     btn.classList.remove('following');
   }
+}
+
+function renderFriendsList() {
+  const follows = getFollows();
+  const countEl = document.getElementById('myFriendsCount');
+  const body = document.getElementById('myFriendsBody');
+  const empty = document.getElementById('myFriendsEmpty');
+  if (!body) return;
+  
+  if (countEl) countEl.textContent = follows.length ? '(' + follows.length + ')' : '';
+  
+  if (!follows.length) {
+    body.innerHTML = '';
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  
+  body.innerHTML = '<div style="background:#fff;">' + follows.map(agr => {
+    const p = allData.find(x => x.agr === agr);
+    if (!p) return '';
+    const curHI = p.history.length ? p.history[p.history.length-1].hi : null;
+    return `<div class="friends-item">
+      <div class="friends-item-info" onclick="goToPlayer('${agr}')">
+        <div class="friends-item-name">${p.name}</div>
+        <div class="friends-item-agr">${agr}</div>
+      </div>
+      <div class="friends-item-hi">${curHI !== null ? fmtHI(curHI) : '—'}</div>
+      <button class="friends-remove" onclick="removeFriend('${agr}')" title="Удалить">×</button>
+    </div>`;
+  }).join('') + '</div>';
+}
+
+function removeFriend(agr) {
+  let follows = getFollows().filter(a => a !== agr);
+  saveFollows(follows);
+  renderFriendsList();
+  updateFriendsCount();
+  // Обновляем кнопку если сейчас открыт этот профиль
+  if (currentProfileAgr === agr) updateFollowBtn();
+}
+
+function goToPlayer(agr) {
+  switchTab('search');
+  const p = allData.find(x => x.agr === agr);
+  if (!p) return;
+  document.getElementById('searchInput').value = p.name;
+  showProfile(p);
 }
 
 function updateFriendsCount() {
@@ -830,12 +904,20 @@ function switchFeedTab(mode) {
 let myChartInstance = null;
 
 function loadMyProfile() {
-  // По умолчанию — Denis Timakov RU009590
-  const agr = localStorage.getItem('my_agr') || 'RU009590';
+  const agr = localStorage.getItem('my_agr');
+  if (!agr) {
+    // Показываем форму настройки
+    document.getElementById('mySetup').style.display = 'block';
+    document.getElementById('myProfileActive').classList.remove('active');
+    return;
+  }
   if (!allData.length) return;
   const p = allData.find(x => x.agr === agr);
-  if (!p) return;
-  localStorage.setItem('my_agr', agr); // сохраняем
+  if (!p) {
+    document.getElementById('mySetup').style.display = 'block';
+    document.getElementById('myProfileActive').classList.remove('active');
+    return;
+  }
   showMyProfile(p);
 }
 
@@ -852,19 +934,36 @@ function previewMyAgr() {
 
 function saveMyProfile() {
   const q = document.getElementById('myAgrInput').value.trim().toUpperCase();
-  const match = allData.find(p => p.agr.toUpperCase() === q || p.agr.toUpperCase().includes(q));
-  if (!match) { alert('Игрок не найден. Введи точный АГР номер, например RU009590'); return; }
+  if (!q) { alert('Введи АГР номер, например RU009590'); return; }
+  const match = allData.find(p => p.agr.toUpperCase() === q);
+  if (!match) { 
+    // Попробуем частичное совпадение
+    const partial = allData.find(p => p.agr.toUpperCase().includes(q) || p.name.toUpperCase().includes(q));
+    if (!partial) { alert('Игрок не найден. Введи точный АГР номер, например RU009590'); return; }
+    localStorage.setItem('my_agr', partial.agr);
+    document.getElementById('mySetup').style.display = 'none';
+    showMyProfile(partial);
+    return;
+  }
   localStorage.setItem('my_agr', match.agr);
+  document.getElementById('mySetup').style.display = 'none';
   showMyProfile(match);
 }
 
 function resetMyProfile() {
+  if (!confirm('Сменить профиль? PDF данные этого профиля будут удалены.')) return;
   localStorage.removeItem('my_agr');
   localStorage.removeItem('my_pdf_history');
+  localStorage.removeItem('my_pdf_ts');
   document.getElementById('mySetup').style.display = 'block';
   document.getElementById('myProfileActive').classList.remove('active');
   document.getElementById('myAgrInput').value = '';
   document.getElementById('myPreview').classList.remove('active');
+  // Сбрасываем статус PDF
+  const pdfStatus = document.getElementById('pdfStatus');
+  if (pdfStatus) { pdfStatus.textContent = ''; pdfStatus.classList.remove('active'); }
+  const pdfLabel = document.getElementById('pdfLabel');
+  if (pdfLabel) pdfLabel.textContent = '↑ Загрузить выписку PDF с hcp.rusgolf.ru';
 }
 
 function showMyProfile(player) {
@@ -873,6 +972,17 @@ function showMyProfile(player) {
 
   // Объединяем историю из Pivot + PDF если есть
   let h = [...player.history];
+  try {
+    const savedTs = localStorage.getItem('my_pdf_ts');
+    if (savedTs) {
+      const statusEl = document.getElementById('pdfStatus');
+      if (statusEl) {
+        statusEl.innerHTML = '✓ История из PDF · <span class="pdf-ts">' + savedTs + '</span>';
+        statusEl.classList.add('active');
+        document.getElementById('pdfLabel').textContent = '↑ Обновить выписку PDF';
+      }
+    }
+  } catch(e) {}
   try {
     const pdfHist = JSON.parse(localStorage.getItem('my_pdf_history') || '[]');
     if (pdfHist.length) {
@@ -911,6 +1021,7 @@ function showMyProfile(player) {
     document.getElementById('myStaleNote').style.display = 'none';
   }
 
+  renderFriendsList();
   document.getElementById('myChanges').textContent = player.changes;
   document.getElementById('myDrops').textContent = player.drops;
   document.getElementById('myRises').textContent = player.rises;
@@ -937,22 +1048,59 @@ function showMyProfile(player) {
     }
   });
 
-  // History table
-  const filtered = h.filter((d,i) => i===0 || d.date===h[h.length-1].date || d.hi!==h[i-1].hi);
+  // History table — показываем ВСЕ раунды из PDF, или только точки изменений из Pivot
   const bestHI = gindex;
-  document.getElementById('myHistoryBody').innerHTML = filtered.slice().reverse().map((d,i,arr) => {
+  let tableRows = [];
+  
+  try {
+    const pdfHist = JSON.parse(localStorage.getItem('my_pdf_history') || '[]');
+    if (pdfHist.length) {
+      // Полная история из PDF — все раунды
+      tableRows = pdfHist.slice().reverse();
+      document.getElementById('myHistoryTable').querySelector('thead tr').innerHTML =
+        '<th>Дата</th><th>Турнир · Поле</th><th>Формат</th><th>Гросс</th><th>Stbl</th><th>HI</th><th>Δ</th>';
+    } else {
+      // Только Pivot — упрощённая таблица
+      const filtered = h.filter((d,i) => i===0 || d.date===h[h.length-1].date || d.hi!==h[i-1].hi);
+      tableRows = filtered.slice().reverse();
+      document.getElementById('myHistoryTable').querySelector('thead tr').innerHTML =
+        '<th>Дата</th><th>HI</th><th>Изменение</th>';
+    }
+  } catch(e) {
+    const filtered = h.filter((d,i) => i===0 || d.date===h[h.length-1].date || d.hi!==h[i-1].hi);
+    tableRows = filtered.slice().reverse();
+  }
+  
+  const pdfLoaded = !!localStorage.getItem('my_pdf_history');
+  
+  document.getElementById('myHistoryBody').innerHTML = tableRows.map((d,i,arr) => {
     const prev = arr[i+1];
+    const curHIval = d.hi;
+    const prevHIval = prev ? prev.hi : null;
     let deltaStr='', dc='zero';
-    if (prev) {
-      const diff = (d.hi-prev.hi).toFixed(1);
+    if (prevHIval !== null) {
+      const diff = (curHIval - prevHIval).toFixed(1);
       if(diff<0){deltaStr=diff;dc='neg';}else if(diff>0){deltaStr='+'+diff;dc='pos';}else{deltaStr='—';dc='zero';}
     }
-    const isBest = Math.abs(d.hi-bestHI)<0.001;
-    return `<tr class="${isBest?'best-row':''}">
-      <td class="td-date">${fmtDate(d.date)}</td>
-      <td class="td-hi">${fmtHI(d.hi)}</td>
-      <td class="td-delta ${dc}">${deltaStr}</td>
-    </tr>`;
+    const isBest = Math.abs(curHIval - bestHI) < 0.001;
+    
+    if (pdfLoaded && d.tournament !== undefined) {
+      return `<tr class="${isBest?'best-row':''}">
+        <td class="td-date">${fmtDate(d.date)}</td>
+        <td><div class="td-tournament">${d.tournament||'—'}</div><div class="td-club">${d.club||''}</div></td>
+        <td class="td-format">${d.format||''}</td>
+        <td class="td-date">${d.score||'—'}</td>
+        <td class="td-date">${d.stbl!==null&&d.stbl!==undefined?d.stbl:'—'}</td>
+        <td class="td-hi">${fmtHI(curHIval)}</td>
+        <td class="td-delta ${dc}">${deltaStr}</td>
+      </tr>`;
+    } else {
+      return `<tr class="${isBest?'best-row':''}">
+        <td class="td-date">${fmtDate(d.date)}</td>
+        <td class="td-hi">${fmtHI(curHIval)}</td>
+        <td class="td-delta ${dc}">${deltaStr}</td>
+      </tr>`;
+    }
   }).join('');
 }
 
@@ -970,7 +1118,13 @@ async function handlePdfUpload(event) {
       return;
     }
     localStorage.setItem('my_pdf_history', JSON.stringify(history));
-    const agr = localStorage.getItem('my_agr');
+    const now = new Date();
+    const ts = now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
+    localStorage.setItem('my_pdf_ts', ts);
+    document.getElementById('pdfStatus').innerHTML = '✓ Загружено ' + history.length + ' раундов · <span class="pdf-ts">' + ts + '</span>';
+    document.getElementById('pdfStatus').classList.add('active');
+    document.getElementById('pdfLabel').textContent = '↑ Обновить выписку PDF';
+    const agr = localStorage.getItem('my_agr') || 'RU009590';
     const p = allData.find(x => x.agr === agr);
     if (p) showMyProfile(p);
   } catch(e) {
@@ -995,33 +1149,116 @@ async function extractTextFromPdf(file) {
 }
 
 function parsePdfHistory(text) {
-  const history = [];
-  // Ищем паттерн даты и HI в тексте PDF из hcp.rusgolf.ru
-  // Формат: DD.MM.YYYY ... HI (число)
-  const lines = text.split(/\n|\r/);
-  for (const line of lines) {
-    const dateMatch = line.match(/(\d{2}\.\d{2}\.\d{4})/);
-    const hiMatch = line.match(/\b(\d{1,2}[,.]\d{1}|\d{2,3})\b/g);
-    if (dateMatch && hiMatch) {
-      const [d, m, y] = dateMatch[1].split('.');
-      const date = `${y}-${m}-${d}`;
-      // Берём последнее подходящее число как HI (обычно в конце строки)
-      for (let j = hiMatch.length-1; j >= 0; j--) {
-        const hi = parseFloat(hiMatch[j].replace(',','.'));
-        if (hi > 0 && hi < 60) {
-          history.push({date, hi});
-          break;
+  // PDF.js возвращает текст как поток токенов разделённых пробелами.
+  // Стратегия: ищем все вхождения дат DD.MM.YYYY как якоря,
+  // между ними берём кусок и вытаскиваем нужные поля.
+  
+  const rounds = [];
+  // Нормализуем текст — убираем лишние пробелы
+  const t = text.replace(/\s+/g, ' ');
+  
+  const dateRe = /(\d{2})\.(\d{2})\.(\d{4})/g;
+  const positions = [];
+  let m;
+  while ((m = dateRe.exec(t)) !== null) {
+    // Пропускаем дату "Generated by" в конце
+    const before = t.slice(Math.max(0, m.index-20), m.index);
+    if (/generated|05\/26/i.test(before)) continue;
+    positions.push({ idx: m.index, end: m.index + m[0].length, d: m[1], mo: m[2], y: m[3], raw: m[0] });
+  }
+  
+  for (let i = 0; i < positions.length; i++) {
+    const pos = positions[i];
+    const nextIdx = i+1 < positions.length ? positions[i+1].idx : t.length;
+    const chunk = t.slice(pos.idx, nextIdx);
+    
+    const dateISO = `${pos.y}-${pos.mo}-${pos.d}`;
+    
+    // Формат игры
+    const fmtMatch = chunk.match(/(СФД|ИСУ|SFD|ISU)-?(\d+)/);
+    const format = fmtMatch ? fmtMatch[0] : '';
+    
+    // Все десятичные числа (с запятой или точкой)
+    const decimals = [];
+    const decRe = /(\d{1,3})[,\.](\d{1})/g;
+    let dm;
+    while ((dm = decRe.exec(chunk)) !== null) {
+      decimals.push(parseFloat(dm[1] + '.' + dm[2]));
+    }
+    
+    // Все целые числа 2+ цифры
+    const ints = [];
+    const intRe = /(\d{2,3})/g;
+    let im;
+    while ((im = intRe.exec(chunk)) !== null) {
+      ints.push(parseInt(im[1]));
+    }
+    
+    // HI финальный = последнее десятичное число 0 < x < 60
+    let hi = null;
+    for (let j = decimals.length - 1; j >= 0; j--) {
+      if (decimals[j] > 0 && decimals[j] < 60) { hi = decimals[j]; break; }
+    }
+    if (hi === null) continue;
+    
+    // Score (гросс) = целое 60-160
+    let score = null;
+    for (let j = 0; j < ints.length; j++) {
+      if (ints[j] >= 60 && ints[j] <= 160) { score = ints[j]; break; }
+    }
+    
+    // Stableford = целое 0-60, идёт после Score в массиве
+    let stbl = null;
+    if (score !== null) {
+      const si = ints.indexOf(score);
+      for (let j = si + 1; j < ints.length; j++) {
+        if (ints[j] >= 0 && ints[j] <= 60) { stbl = ints[j]; break; }
+      }
+    }
+    
+    // Турнир и поле: текст до формата, после даты
+    let tournament = '', club = '';
+    if (fmtMatch) {
+      const fmtIdx = chunk.indexOf(fmtMatch[0]);
+      const between = chunk.slice(pos.raw.length, fmtIdx).trim();
+      // Разбиваем: слова до последнего "гольф" упоминания = поле
+      const words = between.split(/\s{2,}|
+/).map(s => s.trim()).filter(Boolean);
+      if (words.length >= 2) {
+        club = words[words.length - 1];
+        tournament = words.slice(0, -1).join(' ');
+      } else if (words.length === 1) {
+        tournament = words[0];
+      } else {
+        // Пробуем по паттерну: ищем "клуб" или "гольф"
+        const clubMatch = between.match(/([^\d]+(?:клуб|гольф|golf|club|country)[^\d]*)/i);
+        if (clubMatch) {
+          club = clubMatch[0].trim();
+          tournament = between.replace(clubMatch[0], '').trim();
+        } else {
+          tournament = between.trim();
         }
       }
     }
+    
+    rounds.push({
+      date: dateISO,
+      hi,
+      score,
+      stbl,
+      tournament: tournament.trim().slice(0, 80),
+      club: club.trim().slice(0, 60),
+      format
+    });
   }
+  
   // Убираем дубли по дате
   const seen = new Set();
-  return history.filter(h => {
-    if (seen.has(h.date)) return false;
-    seen.add(h.date);
+  return rounds.filter(r => {
+    if (seen.has(r.date)) return false;
+    seen.add(r.date);
     return true;
-  }).sort((a,b) => a.date.localeCompare(b.date));
+  }).sort((a, b) => a.date.localeCompare(b.date));
 }
 
 // ── INIT ────────────────────────────────────────────────────
