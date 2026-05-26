@@ -332,15 +332,11 @@ footer p{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 <script>
-// Принудительная очистка старых данных (версия 2)
+// Принудительная очистка всех данных (версия 3)
 (function(){
-  if(localStorage.getItem('app_version') !== '2') {
-    const keep = ['gindex_data','gindex_ts']; // кеш данных оставляем
-    const keys = Object.keys(localStorage);
-    for(const k of keys) {
-      if(!keep.includes(k)) localStorage.removeItem(k);
-    }
-    localStorage.setItem('app_version','2');
+  if(localStorage.getItem('app_version') !== '3') {
+    localStorage.clear(); // чистим вообще всё
+    localStorage.setItem('app_version','3');
   }
 })();
 
