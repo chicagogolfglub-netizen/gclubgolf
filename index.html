@@ -11,10 +11,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-/* ─────────────────────────────────────────────────────
-   G-CLUB · Design v4 · Clean Athletic
-   Palette: off-white bg / white cards / black type / red accent
-───────────────────────────────────────────────────── */
 :root {
   --bg:       #F7F6F3;
   --card:     #FFFFFF;
@@ -28,8 +24,6 @@
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 body { background:var(--bg); color:var(--ink); font-family:'Inter',system-ui,sans-serif; min-height:100vh; -webkit-font-smoothing:antialiased; }
-
-/* ── HEADER ────────────────────── */
 header {
   position:sticky; top:0; z-index:100;
   background:var(--card);
@@ -38,108 +32,32 @@ header {
   display:flex; align-items:center; justify-content:space-between;
   height:52px;
 }
-.gc-logo {
-  display:flex; align-items:center; gap:10px;
-}
-.gc-logo-mark {
-  width:32px; height:32px;
-  background:var(--ink);
-  border-radius:6px;
-  display:flex; align-items:center; justify-content:center;
-}
-.gc-logo-mark span {
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:700; font-size:18px;
-  color:#fff; letter-spacing:0;
-}
-.gc-logo-name {
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:700; font-size:17px;
-  letter-spacing:0.1em; text-transform:uppercase;
-  color:var(--ink);
-}
-.gc-logo-sub {
-  font-size:10px; color:var(--ink3);
-  margin-top:1px; letter-spacing:0.02em;
-}
-/* legacy compat */
+.gc-logo { display:flex; align-items:center; gap:10px; }
+.gc-logo-mark { width:32px; height:32px; background:var(--ink); border-radius:6px; display:flex; align-items:center; justify-content:center; }
+.gc-logo-mark span { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:18px; color:#fff; letter-spacing:0; }
+.gc-logo-name { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:17px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink); }
+.gc-logo-sub { font-size:10px; color:var(--ink3); margin-top:1px; letter-spacing:0.02em; }
 .logo-g, .logo-text-wrap, .logo-wrap, .logo-mark { display:none; }
-
-/* ── NAV ────────────────────────── */
-nav.nav-tabs {
-  background:var(--card);
-  border-bottom:1px solid var(--line);
-  padding:0 20px;
-  display:flex;
-}
+nav.nav-tabs { background:var(--card); border-bottom:1px solid var(--line); padding:0 20px; display:flex; }
 .nav-tabs-inner { display:flex; width:100%; }
-.nav-tab {
-  flex:1; text-align:center;
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:700; font-size:12px;
-  letter-spacing:0.18em; text-transform:uppercase;
-  color:var(--ink3);
-  padding:11px 0;
-  cursor:pointer;
-  border-bottom:2px solid transparent;
-  margin-bottom:-1px;
-  transition:color .12s, border-color .12s;
-}
+.nav-tab { flex:1; text-align:center; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:var(--ink3); padding:11px 0; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; transition:color .12s, border-color .12s; }
 .nav-tab.active { color:var(--ink); border-bottom-color:var(--red); }
 .nav-tab:hover:not(.active) { color:var(--ink); }
-
-/* ── PANELS ──────────────────────── */
 .panel { display:none; padding:20px; max-width:680px; }
 .panel.active { display:block; }
-
-/* ── SEARCH ──────────────────────── */
 .tagline { font-size:11px; color:var(--ink3); letter-spacing:0.1em; text-transform:uppercase; font-family:'Barlow Condensed',sans-serif; font-weight:500; margin-bottom:14px; }
-.search-wrap {
-  display:flex; align-items:center;
-  background:var(--card);
-  border:1.5px solid var(--line);
-  border-radius:var(--r);
-  padding:0 16px;
-  margin-bottom:14px;
-  transition:border-color .15s;
-}
+.search-wrap { display:flex; align-items:center; background:var(--card); border:1.5px solid var(--line); border-radius:var(--r); padding:0 16px; margin-bottom:14px; transition:border-color .15s; }
 .search-wrap:focus-within { border-color:var(--red); }
-.search-wrap input {
-  flex:1; background:transparent; border:none; outline:none;
-  font-family:'Inter',sans-serif; font-size:15px; font-weight:400;
-  color:var(--ink); padding:13px 0; caret-color:var(--red);
-}
+.search-wrap input { flex:1; background:transparent; border:none; outline:none; font-family:'Inter',sans-serif; font-size:15px; font-weight:400; color:var(--ink); padding:13px 0; caret-color:var(--red); }
 .search-wrap input::placeholder { color:var(--ink3); }
-.search-btn {
-  background:var(--red); border:none; color:#fff;
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:700; font-size:12px; letter-spacing:0.14em; text-transform:uppercase;
-  cursor:pointer; padding:7px 14px; border-radius:6px;
-}
-
-/* ── SUGGESTIONS ────────────────── */
-.suggestions {
-  position:absolute; top:100%; left:0; right:0;
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:0 0 var(--r) var(--r);
-  box-shadow:0 8px 24px rgba(0,0,0,0.08);
-  max-height:240px; overflow-y:auto;
-  z-index:50; display:none;
-}
+.search-btn { background:var(--red); border:none; color:#fff; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; cursor:pointer; padding:7px 14px; border-radius:6px; }
+.suggestions { position:absolute; top:100%; left:0; right:0; background:var(--card); border:1px solid var(--line); border-radius:0 0 var(--r) var(--r); box-shadow:0 8px 24px rgba(0,0,0,0.08); max-height:240px; overflow-y:auto; z-index:50; display:none; }
 .suggestions.active { display:block; }
-.suggestion-item {
-  padding:11px 16px; cursor:pointer;
-  font-size:14px; font-weight:400;
-  border-bottom:0.5px solid var(--line);
-  color:var(--ink); display:flex; align-items:center; gap:8px;
-}
+.suggestion-item { padding:11px 16px; cursor:pointer; font-size:14px; font-weight:400; border-bottom:0.5px solid var(--line); color:var(--ink); display:flex; align-items:center; gap:8px; }
 .suggestion-item:hover { background:var(--bg); }
 .suggestion-item:last-child { border-bottom:none; }
 .suggestion-agr { font-size:11px; color:var(--ink3); margin-left:auto; font-family:'Barlow Condensed',sans-serif; font-weight:500; letter-spacing:0.08em; }
 .suggestion-stale { font-size:10px; color:var(--ink3); background:var(--bg); padding:2px 7px; border-radius:4px; }
-
-/* ── STATUS CARDS ─────────────────── */
 .status-card { display:none; background:var(--card); border-radius:var(--r); padding:16px 20px; margin-bottom:14px; border-left:3px solid var(--red); }
 .status-card.active { display:block; animation:up .2s ease; }
 .status-card h3 { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:18px; letter-spacing:0.04em; text-transform:uppercase; margin-bottom:4px; }
@@ -148,56 +66,19 @@ nav.nav-tabs {
 .loading.active { display:block; }
 .error-msg { display:none; font-size:13px; color:var(--red); margin-bottom:12px; }
 .error-msg.active { display:block; }
-
-/* ── PROFILE ─────────────────────── */
 .profile { display:none; }
 .profile.active { display:block; animation:up .2s ease; }
 @keyframes up { from { opacity:0; transform:translateY(6px) } to { opacity:1; transform:translateY(0) } }
-
-/* Player header */
-.player-header {
-  background:var(--card);
-  border-radius:var(--r);
-  padding:20px;
-  margin-bottom:8px;
-}
-.player-name {
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:700; font-size:30px;
-  letter-spacing:0.02em; text-transform:uppercase;
-  line-height:1; margin-bottom:4px;
-}
-.player-agr {
-  font-size:11px; color:var(--ink3);
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:500; letter-spacing:0.12em; text-transform:uppercase;
-  margin-bottom:16px;
-}
-.meta-row {
-  display:grid; grid-template-columns:repeat(3,1fr);
-  gap:8px;
-}
-.meta-item {
-  background:var(--bg);
-  border-radius:8px;
-  padding:12px;
-  text-align:center;
-}
-.meta-label {
-  font-size:9px; font-weight:600;
-  color:var(--ink3); letter-spacing:0.14em; text-transform:uppercase;
-  margin-bottom:4px;
-}
-.meta-value {
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:700; font-size:28px;
-  letter-spacing:-0.5px; color:var(--ink);
-}
+.player-header { background:var(--card); border-radius:var(--r); padding:20px; margin-bottom:8px; }
+.player-name { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:30px; letter-spacing:0.02em; text-transform:uppercase; line-height:1; margin-bottom:4px; }
+.player-agr { font-size:11px; color:var(--ink3); font-family:'Barlow Condensed',sans-serif; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:16px; }
+.meta-row { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.meta-item { background:var(--bg); border-radius:8px; padding:12px; text-align:center; }
+.meta-label { font-size:9px; font-weight:600; color:var(--ink3); letter-spacing:0.14em; text-transform:uppercase; margin-bottom:4px; }
+.meta-value { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:28px; letter-spacing:-0.5px; color:var(--ink); }
 .meta-value.neg { color:var(--blue); }
 .meta-value.pos { color:var(--red); }
 .meta-sub { font-size:10px; color:var(--red); font-weight:600; margin-top:2px; letter-spacing:0.04em; }
-
-/* AGR badge */
 .agr-badge { display:none; border-radius:var(--r); overflow:hidden; margin-bottom:8px; }
 .agr-badge.active { display:block; animation:up .2s ease; }
 .agr-badge-top { background:var(--red); padding:12px 16px; display:flex; align-items:center; gap:10px; }
@@ -205,69 +86,27 @@ nav.nav-tabs {
 .agr-badge-top p { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:13px; letter-spacing:0.1em; text-transform:uppercase; color:#fff; }
 .agr-badge-bottom { background:var(--card); padding:10px 16px; }
 .agr-badge-bottom p { font-size:13px; color:var(--ink2); }
-
-/* GINDEX BADGE */
-.gindex-badge {
-  background:var(--ink);
-  border-radius:var(--r);
-  padding:20px 24px;
-  margin-bottom:8px;
-  display:flex; align-items:center; justify-content:space-between;
-}
+.gindex-badge { background:var(--ink); border-radius:var(--r); padding:20px 24px; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between; }
 .gindex-badge.stale { background:#3A3A3A; }
-.badge-left {}
-.badge-label {
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:700; font-size:10px;
-  letter-spacing:0.2em; text-transform:uppercase;
-  color:var(--red); margin-bottom:6px;
-}
-.badge-value {
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:700; font-size:68px;
-  letter-spacing:-2px; line-height:0.9; color:#fff;
-}
+.badge-label { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--red); margin-bottom:6px; }
+.badge-value { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:68px; letter-spacing:-2px; line-height:0.9; color:#fff; }
 .badge-sub { font-size:11px; color:rgba(255,255,255,0.35); margin-top:8px; }
 .badge-stale-note { font-size:11px; color:rgba(255,255,255,0.3); margin-top:6px; }
 .badge-right { text-align:right; }
-.badge-right-delta {
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:700; font-size:26px;
-  color:var(--red); letter-spacing:0;
-}
+.badge-right-delta { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:26px; color:var(--red); letter-spacing:0; }
 .badge-right-label { font-size:10px; color:rgba(255,255,255,0.3); margin-top:4px; letter-spacing:0.1em; text-transform:uppercase; }
-.badge-right-best {
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:700; font-size:14px;
-  color:var(--blue); letter-spacing:0.06em; text-transform:uppercase;
-}
-
-/* STATS ROW */
+.badge-right-best { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:14px; color:var(--blue); letter-spacing:0.06em; text-transform:uppercase; }
 .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:8px; }
 .stat-box { background:var(--card); border-radius:var(--r); padding:16px; }
 .stat-box.drops { border-top:3px solid var(--blue); }
 .stat-box.rises { border-top:3px solid var(--red); }
-.stat-num {
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:700; font-size:38px;
-  letter-spacing:-1px; line-height:1; margin-bottom:4px;
-  color:var(--ink);
-}
+.stat-num { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:38px; letter-spacing:-1px; line-height:1; margin-bottom:4px; color:var(--ink); }
 .stat-box.drops .stat-num { color:var(--blue); }
 .stat-box.rises .stat-num { color:var(--red); }
 .stat-label { font-size:10px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink3); }
-
-/* SECTIONS */
-.section-label {
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:700; font-size:14px;
-  letter-spacing:0.14em; text-transform:uppercase;
-  color:var(--ink3); margin:16px 0 8px;
-}
+.section-label { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:14px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink3); margin:16px 0 8px; }
 .chart-section { margin-bottom:8px; }
 .chart-container { height:200px; background:var(--card); border-radius:var(--r); padding:16px; }
-
-/* HISTORY TABLE */
 .history-table { width:100%; border-collapse:collapse; background:var(--card); border-radius:var(--r); overflow:hidden; margin-bottom:16px; }
 .history-table th { font-family:'Barlow Condensed',sans-serif; font-weight:600; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink3); padding:10px 16px; border-bottom:1px solid var(--line); text-align:left; }
 .history-table td { padding:11px 16px; border-bottom:0.5px solid rgba(0,0,0,0.05); }
@@ -281,17 +120,8 @@ nav.nav-tabs {
 .td-delta.zero { color:var(--ink3); }
 .td-tournament { font-size:13px; }
 .td-club { font-size:11px; color:var(--ink3); }
-
-/* ── FEED ─────────────────────────── */
 .feed-day-block { margin-bottom:28px; }
-.feed-day-header {
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:700; font-size:20px;
-  letter-spacing:0.08em; text-transform:uppercase;
-  color:var(--ink); margin-bottom:10px;
-  padding-bottom:8px;
-  border-bottom:2px solid var(--ink);
-}
+.feed-day-header { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:20px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink); margin-bottom:10px; padding-bottom:8px; border-bottom:2px solid var(--ink); }
 .feed-section { margin-bottom:10px; }
 .feed-section-header { display:flex; align-items:baseline; gap:8px; margin-bottom:8px; }
 .feed-count { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:36px; letter-spacing:-1px; line-height:1; }
@@ -311,24 +141,13 @@ nav.nav-tabs {
 .feed-item-delta.neg { color:var(--blue); }
 .feed-item-delta.pos { color:var(--red); }
 .feed-loading { font-size:12px; color:var(--ink3); letter-spacing:0.06em; font-family:'Barlow Condensed',sans-serif; font-weight:500; text-transform:uppercase; }
-
-/* Feed sub-tabs */
-#feedTabAll, #feedTabFriends {
-  font-family:'Barlow Condensed',sans-serif !important;
-  font-weight:700 !important;
-  font-size:12px !important;
-  letter-spacing:0.14em !important;
-  text-transform:uppercase !important;
-}
-
-/* ── MY PROFILE ───────────────────── */
+#feedTabAll, #feedTabFriends { font-family:'Barlow Condensed',sans-serif !important; font-weight:700 !important; font-size:12px !important; letter-spacing:0.14em !important; text-transform:uppercase !important; }
 .my-badge { display:inline-block; background:var(--ink); color:#fff; padding:4px 12px; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; border-radius:4px; margin-bottom:12px; }
 #myHistoryTable { font-size:12px; }
 #myHistoryTable th, #myHistoryTable td { white-space:nowrap; padding:10px; }
 #myHistoryTable th:nth-child(2), #myHistoryTable td:nth-child(2) { white-space:normal; min-width:120px; max-width:160px; }
 #myHistoryTable th:nth-child(3), #myHistoryTable td:nth-child(3) { white-space:normal; min-width:100px; max-width:140px; color:var(--ink3); font-size:11px; }
 .pdf-ts { font-size:12px; color:var(--ink3); margin-top:4px; }
-
 .my-setup { background:var(--card); border-radius:var(--r); padding:32px 24px; margin-bottom:8px; text-align:center; }
 .my-setup-title { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:26px; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink); margin-bottom:6px; }
 .my-input-wrap { display:flex; align-items:center; background:var(--bg); border-radius:8px; padding:0 16px; margin:16px 0; }
@@ -341,7 +160,6 @@ nav.nav-tabs {
 .my-preview.active { display:block; }
 .my-preview-name { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:20px; letter-spacing:0.03em; text-transform:uppercase; margin-bottom:2px; }
 .my-preview-agr { font-size:12px; color:var(--ink3); }
-
 .pdf-upload-wrap { border:1.5px dashed var(--line); padding:20px; text-align:center; cursor:pointer; margin-bottom:10px; border-radius:var(--r); background:var(--card); transition:border-color .15s; }
 .pdf-upload-wrap:hover { border-color:var(--red); }
 .pdf-upload-wrap input { display:none; }
@@ -350,12 +168,9 @@ nav.nav-tabs {
 .pdf-status.active { display:block; }
 .my-profile-active { display:none; }
 .my-profile-active.active { display:block; animation:up .2s ease; }
-
 .follow-btn { background:var(--ink); border:none; color:#fff; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:14px; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; padding:13px 20px; border-radius:8px; width:100%; margin-top:10px; transition:background .15s; }
 .follow-btn:hover { background:var(--red); }
 .follow-btn.following { background:var(--bg); color:var(--ink); }
-
-/* FRIENDS */
 .friends-item { display:flex; align-items:center; gap:12px; padding:12px 16px; background:var(--card); border-bottom:0.5px solid var(--line); }
 .friends-item:last-child { border-bottom:none; }
 .friends-item-avatar { width:36px; height:36px; background:var(--ink); border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:13px; letter-spacing:0.04em; color:#fff; flex-shrink:0; text-transform:uppercase; }
@@ -365,22 +180,13 @@ nav.nav-tabs {
 .friends-item-hi { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:19px; color:var(--ink); }
 .friends-remove { background:transparent; border:none; color:var(--ink3); font-size:18px; cursor:pointer; padding:4px 8px; line-height:1; border-radius:50%; transition:background .12s; }
 .friends-remove:hover { background:var(--bg); color:var(--ink); }
-
-/* FOOTER */
 footer { padding:20px; border-top:1px solid var(--line); display:flex; align-items:center; justify-content:center; background:var(--bg); }
 footer p { font-size:11px; color:var(--ink3); font-family:'Barlow Condensed',sans-serif; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; }
 .footer-g { display:none; }
-
-@media(max-width:600px) {
-  .panel { padding:14px; }
-  .meta-row { grid-template-columns:repeat(3,1fr); gap:6px; }
-  .stats-row { gap:6px; }
-}
+@media(max-width:600px) { .panel { padding:14px; } .meta-row { grid-template-columns:repeat(3,1fr); gap:6px; } .stats-row { gap:6px; } }
 </style>
 </head>
 <body>
-
-<!-- HEADER -->
 <header>
   <div class="gc-logo">
     <div class="gc-logo-mark"><span>G</span></div>
@@ -390,8 +196,6 @@ footer p { font-size:11px; color:var(--ink3); font-family:'Barlow Condensed',san
     </div>
   </div>
 </header>
-
-<!-- NAV -->
 <nav class="nav-tabs">
   <div class="nav-tabs-inner">
     <div class="nav-tab active" onclick="switchTab('search')">Search</div>
@@ -399,8 +203,6 @@ footer p { font-size:11px; color:var(--ink3); font-family:'Barlow Condensed',san
     <div class="nav-tab" id="myTab" onclick="switchTab('my')">Me</div>
   </div>
 </nav>
-
-<!-- ПОИСК -->
 <div class="panel active" id="panel-search">
   <p class="tagline">Территория открытых игроков</p>
   <div style="position:relative;">
@@ -412,7 +214,7 @@ footer p { font-size:11px; color:var(--ink3); font-family:'Barlow Condensed',san
   </div>
   <div class="loading" id="loading">
     <span id="loadingText">Загружаем данные...</span>
-    <span id="cacheNote" style="display:none;margin-left:8px;font-size:11px;color:var(--muted)"></span>
+    <span id="cacheNote" style="display:none;margin-left:8px;font-size:11px;color:var(--ink3)"></span>
   </div>
   <div id="refreshWrap" style="display:none;margin-bottom:16px;">
     <button onclick="refreshData()" style="background:transparent;border:none;color:var(--blue);font-size:14px;font-weight:500;cursor:pointer;padding:0;">↻ Обновить данные</button>
@@ -464,28 +266,21 @@ footer p { font-size:11px; color:var(--ink3); font-family:'Barlow Condensed',san
     </div>
   </div>
 </div>
-
-<!-- ЛЕНТА -->
 <div class="panel" id="panel-feed">
   <div style="display:flex;background:#E5E5EA;border-radius:10px;padding:3px;gap:2px;margin-bottom:16px;">
     <div id="feedTabAll" onclick="switchFeedTab('all')" style="flex:1;font-size:13px;font-weight:500;color:#000;padding:7px 12px;cursor:pointer;border-radius:8px;text-align:center;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.12);">Все</div>
-    <div id="feedTabFriends" onclick="switchFeedTab('friends')" style="flex:1;font-size:13px;font-weight:500;color:var(--muted);padding:7px 12px;cursor:pointer;border-radius:8px;text-align:center;">Друзья <span id="friendsCount"></span></div>
+    <div id="feedTabFriends" onclick="switchFeedTab('friends')" style="flex:1;font-size:13px;font-weight:500;color:var(--ink3);padding:7px 12px;cursor:pointer;border-radius:8px;text-align:center;">Друзья <span id="friendsCount"></span></div>
   </div>
   <div class="feed-loading" id="feedLoading">Загружаем ленту...</div>
   <div id="feedContent"></div>
 </div>
-
-
-<!-- МОЙ ПРОФИЛЬ -->
 <div class="panel" id="panel-my">
   <p class="tagline">Мой Golf Journey</p>
-
-  <!-- Если не настроен -->
   <div id="mySetup">
     <div class="my-setup">
       <div style="margin-bottom:16px;"><div class="gc-logo-mark" style="width:48px;height:48px;border-radius:10px;"><span style="font-size:26px;">G</span></div></div>
       <p class="my-setup-title">Your Golf Journey</p>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:0;">Например: RU009590 — найди свой номер на hcp.rusgolf.ru</p>
+      <p style="font-size:13px;color:var(--ink3);margin-bottom:0;">Например: RU009590 — найди свой номер на hcp.rusgolf.ru</p>
       <div class="my-input-wrap">
         <input type="text" id="myAgrInput" placeholder="RU009590" autocomplete="off" oninput="previewMyAgr()" onkeydown="if(event.key==='Enter')saveMyProfile()">
       </div>
@@ -495,12 +290,10 @@ footer p { font-size:11px; color:var(--ink3); font-family:'Barlow Condensed',san
       </div>
       <button class="my-btn" onclick="saveMyProfile()">Это я →</button>
       <div style="margin-top:12px;">
-        <button onclick="forceClearProfile()" style="background:transparent;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;padding:0;">Сбросить сохранённый профиль</button>
+        <button onclick="forceClearProfile()" style="background:transparent;border:none;color:var(--ink3);font-size:11px;cursor:pointer;text-decoration:underline;padding:0;">Сбросить сохранённый профиль</button>
       </div>
     </div>
   </div>
-
-  <!-- Если настроен -->
   <div class="my-profile-active" id="myProfileActive">
     <div class="my-badge">★ MY PROFILE</div>
     <div class="player-header">
@@ -528,19 +321,16 @@ footer p { font-size:11px; color:var(--ink3); font-family:'Barlow Condensed',san
       <div class="stat-box drops"><div class="stat-num" id="myDrops">0</div><div class="stat-label">↓ Снижений</div></div>
       <div class="stat-box rises"><div class="stat-num" id="myRises">0</div><div class="stat-label">↑ Повышений</div></div>
     </div>
-
-    <!-- PDF загрузка -->
     <p class="section-label">Полная история из АГР</p>
     <div id="pdfStatus" class="pdf-status" style="display:none;margin-bottom:8px;"></div>
     <div id="pasteSection">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">
+      <p style="font-size:12px;color:var(--ink3);margin-bottom:10px;">
         Открой <strong>hcp.rusgolf.ru</strong> → найди себя → выдели всю таблицу раундов (Cmd+A) → скопируй (Cmd+C) → вставь сюда:
       </p>
-      <textarea id="pdfPasteInput" placeholder="Вставь текст из выписки АГР сюда..." style="width:100%;height:120px;padding:12px;font-family:'Inter',sans-serif;font-size:13px;border:1px solid var(--line);background:#fff;resize:vertical;outline:none;color:var(--text);"></textarea>
+      <textarea id="pdfPasteInput" placeholder="Вставь текст из выписки АГР сюда..." style="width:100%;height:120px;padding:12px;font-family:'Inter',sans-serif;font-size:13px;border:1px solid var(--line);background:#fff;resize:vertical;outline:none;color:var(--ink);"></textarea>
       <button onclick="handlePastedText()" style="margin-top:8px;background:var(--red);border:none;color:#fff;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;padding:10px 20px;">Загрузить историю</button>
     </div>
     <div id="pdfLabel" style="display:none;"></div>
-
     <div class="chart-section">
       <p class="section-label">Динамика Handicap Index</p>
       <div class="chart-container"><canvas id="myChart"></canvas></div>
@@ -552,31 +342,23 @@ footer p { font-size:11px; color:var(--ink3); font-family:'Barlow Condensed',san
       <tbody id="myHistoryBody"></tbody>
     </table>
     </div>
-    <!-- Список друзей -->
     <div style="margin-top:32px;" id="myFriendsList">
       <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--line);">
-        <p style="font-size:9px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);">Друзья <span id="myFriendsCount"></span></p>
-        <button onclick="clearAllFriends()" style="background:transparent;border:none;color:var(--muted);font-size:10px;cursor:pointer;letter-spacing:.1em;text-transform:uppercase;">Очистить всех</button>
+        <p style="font-size:9px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--ink3);">Друзья <span id="myFriendsCount"></span></p>
+        <button onclick="clearAllFriends()" style="background:transparent;border:none;color:var(--ink3);font-size:10px;cursor:pointer;letter-spacing:.1em;text-transform:uppercase;">Очистить всех</button>
       </div>
       <div id="myFriendsBody"></div>
-      <div id="myFriendsEmpty" style="display:none;font-size:12px;color:var(--muted);padding:12px 0;">
+      <div id="myFriendsEmpty" style="display:none;font-size:12px;color:var(--ink3);padding:12px 0;">
         Ты ещё никого не добавил. Найди игрока в поиске и нажми "+ Следить"
       </div>
     </div>
-
     <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--line);">
       <button class="my-btn-sec" onclick="resetMyProfile()">Сменить профиль</button>
     </div>
   </div>
 </div>
-
-
-<footer>
-  <p>© G-CLUB 2026</p>
-</footer>
-
+<footer><p>© G-CLUB 2026</p></footer>
 <script>
-
 const TIMAKOV_HISTORY = [
   {date:'2024-07-03',tournament:'Игровой тест',club:'Московский городской Гольф Клуб',format:'СФД-18',score:115,stbl:null,hi:48.1},
   {date:'2024-08-04',tournament:'Ladies and Gentlemen',club:'ЗАВИДОВО, Россия гольф-клуб',format:'СФД-18',score:117,stbl:51,hi:31.9},
@@ -591,300 +373,140 @@ const TIMAKOV_HISTORY = [
   {date:'2025-08-21',tournament:'Кубок Лиги Ставок 5 этап День 1',club:'Crystal Lakes Golf & Country Club',format:'СФД-18',score:107,stbl:26,hi:22.0},
   {date:'2025-08-31',tournament:'Турнир Сколково',club:'ЛИНКС Нэшнл гольф-клуб',format:'СФД-18',score:98,stbl:36,hi:22.0}
 ];
-
-// Принудительная очистка всех данных (версия 3)
 (function(){
   if(localStorage.getItem('app_version') !== '6') {
-    localStorage.clear(); // чистим вообще всё
+    localStorage.clear();
     localStorage.setItem('app_version','6');
   }
 })();
-
 const API_KEY='AIzaSyBvrpd_FFS4VoPKNLcJsWFMUPxP34sfkcE';
-const SPREADSHEET_ID='1RjMZ6ZvInzJ4ULBCV4_mWMEZoC4J1YsVEurcf0I3M_w';
+const SPREADSHEET_ID='1RjMZ6ZvInzJ4ULBCV4_mWMEZoC4I1YsVEurcf0I3M_w';
 const SHEET_NAME='Pivot';
 const STALE_DAYS=30;
 const FEED_DAYS=7;
-const RETURN_GAP_DAYS=14; // перерыв в данных — "снова в АГР"
-
+const RETURN_GAP_DAYS=14;
 let allData=[];
 let allDates=[];
-
-// ── ОБЩИЙ ПОМОЩНИК ДЛЯ ГРАФИКОВ ─────────────────────────────
 function buildChart(ctx, isoLabels, values, existingPlugin) {
   const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-  const shortLabel = iso => {
-    const [y,m] = iso.split('-');
-    return months[parseInt(m)-1] + ' ' + y.slice(2);
-  };
-
-  // Год каждой точки (двузначный)
-  const years = isoLabels.map(iso => iso.slice(2,4)); // '24','25','26'
-
-  // Year band plugin — чередование белый/серый/белый
+  const shortLabel = iso => { const [y,m] = iso.split('-'); return months[parseInt(m)-1] + ' ' + y.slice(2); };
+  const years = isoLabels.map(iso => iso.slice(2,4));
   const yearBandPlugin = {
     id: existingPlugin || ('yb_' + Math.random().toString(36).slice(2)),
     beforeDraw(chart) {
       const {ctx: c, chartArea:{left, right, top, bottom}, scales:{x}} = chart;
-      // Build year bands
       let curYr = null, bandStart = 0;
       const bands = [];
       years.forEach((yr, i) => {
-        if (yr !== curYr) {
-          if (curYr !== null) bands.push({yr: curYr, from: bandStart, to: i});
-          curYr = yr; bandStart = i;
-        }
+        if (yr !== curYr) { if (curYr !== null) bands.push({yr: curYr, from: bandStart, to: i}); curYr = yr; bandStart = i; }
         if (i === years.length - 1) bands.push({yr: curYr, from: bandStart, to: i + 1});
       });
-
-      const n = years.length - 1; // max index
       bands.forEach((b, bi) => {
-        // First band starts at chart left edge, last ends at chart right edge
         const x0 = bi === 0 ? left : x.getPixelForValue(b.from - 0.5);
         const x1 = bi === bands.length - 1 ? right : x.getPixelForValue(b.to - 0.5);
-        const isOdd = parseInt(b.yr) % 2 === 1; // 25,27 → gray; 24,26 → white
+        const isOdd = parseInt(b.yr) % 2 === 1;
         c.fillStyle = isOdd ? 'rgba(0,0,0,0.04)' : 'rgba(0,0,0,0)';
         c.fillRect(x0, top, x1 - x0, bottom - top);
       });
-
-      // Thin vertical dividers at year boundaries
       bands.forEach((b, bi) => {
         if (bi === 0) return;
         const xPos = x.getPixelForValue(b.from - 0.5);
-        c.save();
-        c.strokeStyle = 'rgba(0,0,0,0.08)';
-        c.lineWidth = 0.5;
-        c.setLineDash([]);
-        c.beginPath();
-        c.moveTo(xPos, top);
-        c.lineTo(xPos, bottom);
-        c.stroke();
-        c.restore();
+        c.save(); c.strokeStyle = 'rgba(0,0,0,0.08)'; c.lineWidth = 0.5; c.setLineDash([]);
+        c.beginPath(); c.moveTo(xPos, top); c.lineTo(xPos, bottom); c.stroke(); c.restore();
       });
     }
   };
-
-  // Segment colors — solid, no dashes
-  const segColor = c => {
-    const i = c.p1DataIndex;
-    if (i === 0) return '#888';
-    return values[i] < values[i-1] ? '#0050E6' : values[i] > values[i-1] ? '#C2001A' : '#AAAAAA';
-  };
-  const ptColors = values.map((v, i) => {
-    if (i === 0) return '#111';
-    return v < values[i-1] ? '#0050E6' : v > values[i-1] ? '#C2001A' : '#AAAAAA';
-  });
-
+  const segColor = c => { const i = c.p1DataIndex; if (i === 0) return '#888'; return values[i] < values[i-1] ? '#0050E6' : values[i] > values[i-1] ? '#C2001A' : '#AAAAAA'; };
+  const ptColors = values.map((v, i) => { if (i === 0) return '#111'; return v < values[i-1] ? '#0050E6' : v > values[i-1] ? '#C2001A' : '#AAAAAA'; });
   return new Chart(ctx, {
     type: 'line',
-    data: {
-      labels: isoLabels.map(shortLabel),
-      datasets: [{
-        data: values,
-        borderWidth: 0.75,
-        segment: { borderColor: segColor, borderDash: () => [] },
-        pointBackgroundColor: ptColors,
-        pointRadius: 2.5,
-        pointHoverRadius: 5,
-        pointBorderWidth: 0,
-        tension: 0.35,
-        fill: false
-      }]
-    },
+    data: { labels: isoLabels.map(shortLabel), datasets: [{ data: values, borderWidth: 0.75, segment: { borderColor: segColor, borderDash: () => [] }, pointBackgroundColor: ptColors, pointRadius: 2.5, pointHoverRadius: 5, pointBorderWidth: 0, tension: 0.35, fill: false }] },
     plugins: [yearBandPlugin],
     options: {
       responsive: true, maintainAspectRatio: false,
       animation: { duration: 300 },
       plugins: {
         legend: { display: false },
-        tooltip: {
-          backgroundColor: '#111',
-          titleColor: 'rgba(255,255,255,0.45)',
-          bodyColor: '#fff',
-          titleFont: { family: 'Inter', size: 11, weight: '400' },
-          bodyFont: { family: 'Barlow Condensed', size: 22, weight: '700' },
-          padding: 12, cornerRadius: 8,
-          callbacks: {
-            title: items => items[0].label,
-            label: item => 'HI  ' + fmtHI(item.raw)
-          }
-        }
+        tooltip: { backgroundColor: '#111', titleColor: 'rgba(255,255,255,0.45)', bodyColor: '#fff', titleFont: { family: 'Inter', size: 11, weight: '400' }, bodyFont: { family: 'Barlow Condensed', size: 22, weight: '700' }, padding: 12, cornerRadius: 8, callbacks: { title: items => items[0].label, label: item => 'HI  ' + fmtHI(item.raw) } }
       },
       scales: {
-        x: {
-          ticks: {
-            color: '#AAAAAA',
-            font: { family: 'Barlow Condensed', size: 11, weight: '500' },
-            maxRotation: 0, maxTicksLimit: 8
-          },
-          grid: { display: false },
-          border: { display: false }
-        },
-        y: {
-          ticks: {
-            color: '#AAAAAA',
-            font: { family: 'Inter', size: 11 },
-            callback: v => Number(v).toFixed(1)
-          },
-          grid: { display: false },
-          border: { display: false }
-        }
+        x: { ticks: { color: '#AAAAAA', font: { family: 'Barlow Condensed', size: 11, weight: '500' }, maxRotation: 0, maxTicksLimit: 8 }, grid: { display: false }, border: { display: false } },
+        y: { ticks: { color: '#AAAAAA', font: { family: 'Inter', size: 11 }, callback: v => Number(v).toFixed(1) }, grid: { display: false }, border: { display: false } }
       }
     }
   });
 }
-// ────────────────────────────────────────────────────────────
-
 let chartInstance=null;
-
-// ── УТИЛИТЫ ─────────────────────────────────────────────────
 function fmtHI(v){return(v===null||v===undefined||v===''||isNaN(v))?'—':Number(v).toFixed(1);}
-
-function fmtDate(d){
-  if(!d)return'';
-  const s=String(d);
-  if(s.includes('-')){const[y,m,day]=s.split('-');return`${day}.${m}.${y}`;}
-  return s;
-}
-
-function toISO(s){
-  if(!s)return'';
-  const str=String(s);
-  if(/^\d{4}-\d{2}-\d{2}$/.test(str))return str;
-  if(/^\d{2}\.\d{2}\.\d{4}$/.test(str)){const[d,m,y]=str.split('.');return`${y}-${m}-${d}`;}
-  return str;
-}
-
-function daysBetweenISO(a,b){
-  if(!a||!b)return 9999;
-  return Math.round(Math.abs(new Date(b)-new Date(a))/86400000);
-}
-
-function daysSince(s){
-  if(!s)return 9999;
-  return Math.round((Date.now()-new Date(toISO(s)).getTime())/86400000);
-}
-
-// ── ЗАГРУЗКА ────────────────────────────────────────────────
+function fmtDate(d){ if(!d)return''; const s=String(d); if(s.includes('-')){const[y,m,day]=s.split('-');return`${day}.${m}.${y}`;} return s; }
+function toISO(s){ if(!s)return''; const str=String(s); if(/^\d{4}-\d{2}-\d{2}$/.test(str))return str; if(/^\d{2}\.\d{2}\.\d{4}$/.test(str)){const[d,m,y]=str.split('.');return`${y}-${m}-${d}`;} return str; }
+function daysBetweenISO(a,b){ if(!a||!b)return 9999; return Math.round(Math.abs(new Date(b)-new Date(a))/86400000); }
+function daysSince(s){ if(!s)return 9999; return Math.round((Date.now()-new Date(toISO(s)).getTime())/86400000); }
 async function loadData(){
   const CACHE_KEY='gindex_data';
   const CACHE_TS='gindex_ts';
-  const CACHE_TTL=60*60*1000; // 1 час
-
+  const CACHE_TTL=60*60*1000;
   try{
     const ts=parseInt(localStorage.getItem(CACHE_TS)||'0');
     const cached=localStorage.getItem(CACHE_KEY);
-    if(cached&&Date.now()-ts<CACHE_TTL){
-      return JSON.parse(cached);
-    }
+    if(cached&&Date.now()-ts<CACHE_TTL){ return JSON.parse(cached); }
   }catch(e){}
-
   const url=`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
   const res=await fetch(url);
   const json=await res.json();
   if(json.error)throw new Error(json.error.message);
   const values=json.values||[];
-
-  try{
-    localStorage.setItem(CACHE_KEY,JSON.stringify(values));
-    localStorage.setItem(CACHE_TS,String(Date.now()));
-  }catch(e){}
-
+  try{ localStorage.setItem(CACHE_KEY,JSON.stringify(values)); localStorage.setItem(CACHE_TS,String(Date.now())); }catch(e){}
   return values;
 }
-
 function parseData(rows){
   if(!rows.length)return[];
   const headers=rows[0];
   const dates=headers.slice(5).map(d=>toISO(String(d)));
   allDates=[...new Set(dates)].sort();
-
   return rows.slice(1).map(row=>{
     const agr=(row[0]||'').trim();
     const name=(row[1]||'').trim();
     const changes=parseInt(row[2])||0;
     const drops=parseInt(row[3])||0;
     const rises=parseInt(row[4])||0;
-
-    // Строим историю: только точки где есть HI
-    const history=dates.map((date,i)=>{
-      const raw=row[5+i];
-      const hi=(raw!==undefined&&raw!=='')?parseFloat(String(raw).replace(',','.')):null;
-      return{date,hi};
-    }).filter(d=>d.hi!==null&&!isNaN(d.hi));
-
-    // Строим множество дат где игрок присутствовал
+    const history=dates.map((date,i)=>{ const raw=row[5+i]; const hi=(raw!==undefined&&raw!=='')?parseFloat(String(raw).replace(',','.')):null; return{date,hi}; }).filter(d=>d.hi!==null&&!isNaN(d.hi));
     const presentDates=new Set(history.map(h=>h.date));
-
     const notPaid=agr.startsWith('NOAGR_')||!history.some(d=>d.date.startsWith('2026'));
     const firstDate=history.length?history[0].date:null;
-
-    // Последняя дата изменения HI
     let lastChangeDate=history.length?history[0].date:null;
-    for(let i=1;i<history.length;i++){
-      if(history[i].hi!==history[i-1].hi)lastChangeDate=history[i].date;
-    }
+    for(let i=1;i<history.length;i++){ if(history[i].hi!==history[i-1].hi)lastChangeDate=history[i].date; }
     const stale=lastChangeDate?daysSince(lastChangeDate)>=STALE_DAYS:false;
-
     return{agr,name,changes,drops,rises,history,presentDates,notPaid,firstDate,lastChangeDate,stale};
   });
 }
-
-function getGIndex(h){
-  const vals=h.map(d=>d.hi).filter(v=>v!==null&&!isNaN(v));
-  return vals.length?Math.min(...vals):null;
-}
-
-// ── ЛЕНТА ───────────────────────────────────────────────────
+function getGIndex(h){ const vals=h.map(d=>d.hi).filter(v=>v!==null&&!isNaN(v)); return vals.length?Math.min(...vals):null; }
 function buildFeed(){
   if(!allData.length)return;
-
-  // Последние FEED_DAYS дат из allDates (от новых к старым)
   const feedDates=allDates.slice(-FEED_DAYS).reverse();
-
   let html='';
-
-  // Фильтр по друзьям
   const follows = getFollows();
   const filterByFriends = feedMode === 'friends';
-
   for(const date of feedDates){
     const dateIdx=allDates.indexOf(date);
-    // Предыдущая дата В ДАННЫХ (не обязательно вчера — может быть 22.05 перед 26.05)
     const prevDate=dateIdx>0?allDates[dateIdx-1]:null;
-    // Сколько календарных дней между датами
     const calGap=prevDate?daysBetweenISO(prevDate,date):0;
-
-    // Фильтруем по подпискам если режим "Друзья"
     const playerFilter = p => !filterByFriends || follows.includes(p.agr);
-
-    // 1. НОВЫЕ и СНОВА В АГР
     const newPlayers=[];
     const returnedPlayers=[];
-
     for(const p of allData){
       if(!playerFilter(p))continue;
       if(!p.agr.startsWith('RU'))continue;
       const hasOnDate=p.presentDates.has(date);
       if(!hasOnDate)continue;
-
       const hiOnDate=p.history.find(h=>h.date===date)?.hi;
       const has2025=p.history.some(h=>h.date.startsWith('2025'));
-
-      // СНОВА В АГР — вариант А: первая запись на эту дату, HI < 40 или есть 2025
       if(p.firstDate===date){
-        if(has2025||(hiOnDate!==undefined&&hiOnDate<40)){
-          returnedPlayers.push(p);
-        } else {
-          newPlayers.push(p); // HI >= 40 и нет 2025 = реально новый
-        }
+        if(has2025||(hiOnDate!==undefined&&hiOnDate<40)){ returnedPlayers.push(p); } else { newPlayers.push(p); }
         continue;
       }
-
-      // СНОВА В АГР — вариант Б: был раньше, пропал, вернулся
-      // Нет на предыдущей дате, но есть запись до этой даты
       if(!prevDate)continue;
-      if(p.presentDates.has(prevDate))continue; // был на предыдущей — не возврат
+      if(p.presentDates.has(prevDate))continue;
       const lastBefore=[...p.history].reverse().find(h=>h.date<date);
       if(!lastBefore)continue;
       const gap=daysBetweenISO(lastBefore.date,date);
@@ -892,8 +514,6 @@ function buildFeed(){
     }
     const newSet=new Set(newPlayers.map(p=>p.agr));
     const returnedSet=new Set(returnedPlayers.map(p=>p.agr));
-
-    // 3. ИЗМЕНИЛИ ГАНДИКАП — HI на date != HI на prevDate
     const changedPlayers=[];
     if(prevDate){
       for(const p of allData){
@@ -901,162 +521,72 @@ function buildFeed(){
         if(newSet.has(p.agr)||returnedSet.has(p.agr))continue;
         const cur=p.history.find(h=>h.date===date);
         const prev=p.history.find(h=>h.date===prevDate);
-        if(cur&&prev&&Math.abs(cur.hi-prev.hi)>0.001){
-          changedPlayers.push({...p,hiNow:cur.hi,hiPrev:prev.hi});
-        }
+        if(cur&&prev&&Math.abs(cur.hi-prev.hi)>0.001){ changedPlayers.push({...p,hiNow:cur.hi,hiPrev:prev.hi}); }
       }
     }
-
     if(!newPlayers.length&&!returnedPlayers.length&&!changedPlayers.length)continue;
-
-    // Заголовок: если между датами больше 1 дня — показываем диапазон
-    const livFmtDate = iso => {
-    const [y,m,d] = iso.split('-');
-    const mn = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-    return parseInt(d)+' '+mn[parseInt(m)-1]+' '+y;
-  };
-  const dayLabel=calGap>1&&prevDate
-    ?`${livFmtDate(prevDate)} — ${livFmtDate(date)}`
-    :livFmtDate(date);
-
+    const livFmtDate = iso => { const [y,m,d] = iso.split('-'); const mn = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']; return parseInt(d)+' '+mn[parseInt(m)-1]+' '+y; };
+    const dayLabel=calGap>1&&prevDate?`${livFmtDate(prevDate)} — ${livFmtDate(date)}`:livFmtDate(date);
     html+=`<div class="feed-day-block"><div class="feed-day-header">${dayLabel}</div>`;
-
-    // Новые
     if(newPlayers.length){
-      html+=`<div class="feed-section">
-        <div class="feed-section-header">
-          <span class="feed-count c-blue">${newPlayers.length}</span>
-          <span class="feed-title c-blue">Новых игроков</span>
-        </div><div class="feed-list">`;
-      html+=newPlayers.map(p=>{
-        const hi=p.history.find(h=>h.date===date)?.hi;
-        return`<div class="feed-item">
-          <div class="feed-item-info">
-            <div class="feed-item-name">${p.name}</div>
-            <div class="feed-item-sub">${p.agr.startsWith('NOAGR_')?'—':p.agr}</div>
-          </div>
-          <div class="feed-item-hi">${fmtHI(hi)}</div>
-        </div>`;
-      }).join('');
+      html+=`<div class="feed-section"><div class="feed-section-header"><span class="feed-count c-blue">${newPlayers.length}</span><span class="feed-title c-blue">Новых игроков</span></div><div class="feed-list">`;
+      html+=newPlayers.map(p=>{ const hi=p.history.find(h=>h.date===date)?.hi; return`<div class="feed-item"><div class="feed-item-info"><div class="feed-item-name">${p.name}</div><div class="feed-item-sub">${p.agr.startsWith('NOAGR_')?'—':p.agr}</div></div><div class="feed-item-hi">${fmtHI(hi)}</div></div>`; }).join('');
       html+=`</div></div>`;
     }
-
-    // Снова в АГР
     if(returnedPlayers.length){
-      html+=`<div class="feed-section">
-        <div class="feed-section-header">
-          <span class="feed-count c-green">${returnedPlayers.length}</span>
-          <span class="feed-title c-green">Снова в АГР</span>
-        </div><div class="feed-list">`;
-      html+=returnedPlayers.map(p=>{
-        const hi=p.history.find(h=>h.date===date)?.hi;
-        const last2025=[...p.history].reverse().find(h=>h.date.startsWith('2025'));
-        return`<div class="feed-item">
-          <div class="feed-item-info">
-            <div class="feed-item-name">${p.name}</div>
-            <div class="feed-item-sub">${p.agr} · последний раз в 2025: ${fmtDate(last2025?.date)}</div>
-          </div>
-          <div class="feed-item-hi">${fmtHI(hi)}</div>
-        </div>`;
-      }).join('');
+      html+=`<div class="feed-section"><div class="feed-section-header"><span class="feed-count c-green">${returnedPlayers.length}</span><span class="feed-title c-green">Снова в АГР</span></div><div class="feed-list">`;
+      html+=returnedPlayers.map(p=>{ const hi=p.history.find(h=>h.date===date)?.hi; const last2025=[...p.history].reverse().find(h=>h.date.startsWith('2025')); return`<div class="feed-item"><div class="feed-item-info"><div class="feed-item-name">${p.name}</div><div class="feed-item-sub">${p.agr} · последний раз в 2025: ${fmtDate(last2025?.date)}</div></div><div class="feed-item-hi">${fmtHI(hi)}</div></div>`; }).join('');
       html+=`</div></div>`;
     }
-
-    // Изменили гандикап
     if(changedPlayers.length){
-      html+=`<div class="feed-section">
-        <div class="feed-section-header">
-          <span class="feed-count c-red">${changedPlayers.length}</span>
-          <span class="feed-title c-red">Изменили гандикап</span>
-        </div><div class="feed-list">`;
-      html+=changedPlayers.map(p=>{
-        const diff=(p.hiNow-p.hiPrev).toFixed(1);
-        const dc=diff<0?'neg':'pos';
-        const sign=diff>0?'+':'';
-        return`<div class="feed-item">
-          <div class="feed-item-info">
-            <div class="feed-item-name">${p.name}</div>
-            <div class="feed-item-sub">${p.agr.startsWith('NOAGR_')?'—':p.agr}</div>
-          </div>
-          <div class="feed-item-hi">${fmtHI(p.hiNow)}</div>
-          <div class="feed-item-delta ${dc}">${sign}${diff}</div>
-        </div>`;
-      }).join('');
+      html+=`<div class="feed-section"><div class="feed-section-header"><span class="feed-count c-red">${changedPlayers.length}</span><span class="feed-title c-red">Изменили гандикап</span></div><div class="feed-list">`;
+      html+=changedPlayers.map(p=>{ const diff=(p.hiNow-p.hiPrev).toFixed(1); const dc=diff<0?'neg':'pos'; const sign=diff>0?'+':''; return`<div class="feed-item"><div class="feed-item-info"><div class="feed-item-name">${p.name}</div><div class="feed-item-sub">${p.agr.startsWith('NOAGR_')?'—':p.agr}</div></div><div class="feed-item-hi">${fmtHI(p.hiNow)}</div><div class="feed-item-delta ${dc}">${sign}${diff}</div></div>`; }).join('');
       html+=`</div></div>`;
     }
-
     html+=`</div>`;
   }
-
   document.getElementById('feedLoading').style.display='none';
   updateFriendsCount();
   let emptyMsg;
-  if (filterByFriends && follows.length === 0) {
-    emptyMsg = '<div style="font-size:13px;color:var(--muted);padding:20px 0">У вас пока нет друзей. Найдите игрока в поиске и нажмите "+ Следить"</div>';
-  } else if (filterByFriends && !html) {
-    emptyMsg = '<div style="font-size:13px;color:var(--muted);padding:20px 0">У ваших друзей не было изменений за последние 7 дней</div>';
-  } else {
-    emptyMsg = '<div style="font-size:13px;color:var(--muted);padding:20px 0">Событий за последние 7 дней нет</div>';
-  }
+  if (filterByFriends && follows.length === 0) { emptyMsg = '<div style="font-size:13px;color:var(--ink3);padding:20px 0">У вас пока нет друзей. Найдите игрока в поиске и нажмите "+ Следить"</div>'; }
+  else if (filterByFriends && !html) { emptyMsg = '<div style="font-size:13px;color:var(--ink3);padding:20px 0">У ваших друзей не было изменений за последние 7 дней</div>'; }
+  else { emptyMsg = '<div style="font-size:13px;color:var(--ink3);padding:20px 0">Событий за последние 7 дней нет</div>'; }
   document.getElementById('feedContent').innerHTML=html||emptyMsg;
 }
-
-// ── НАВИГАЦИЯ ───────────────────────────────────────────────
 function switchTab(tab){
-  document.querySelectorAll('.nav-tab').forEach((t,i)=>{
-    t.classList.toggle('active',(i===0&&tab==='search')||(i===1&&tab==='feed')||(i===2&&tab==='my'));
-  });
+  document.querySelectorAll('.nav-tab').forEach((t,i)=>{ t.classList.toggle('active',(i===0&&tab==='search')||(i===1&&tab==='feed')||(i===2&&tab==='my')); });
   document.getElementById('panel-search').classList.toggle('active',tab==='search');
   document.getElementById('panel-feed').classList.toggle('active',tab==='feed');
   document.getElementById('panel-my').classList.toggle('active',tab==='my');
   if(tab==='feed'&&allData.length){if(getFollows().length>0){switchFeedTab('friends');}else{switchFeedTab('all');}}
   if(tab==='my'&&allData.length)loadMyProfile();
 }
-
-// ── ПОИСК ───────────────────────────────────────────────────
 function hideAll(){
   ['notFound','notPaid','profile'].forEach(id=>document.getElementById(id).classList.remove('active'));
   document.getElementById('errorMsg').classList.remove('active');
   document.getElementById('agrBadge').classList.remove('active');
   document.getElementById('searchBtn').textContent='Найти';
 }
-
 function showSuggestions(q){
   const box=document.getElementById('suggestions');
   if(!q||q.length<2){box.classList.remove('active');return;}
   const matches=allData.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())).slice(0,8);
   if(!matches.length){box.classList.remove('active');return;}
-  box.innerHTML=matches.map(p=>`
-    <div class="suggestion-item" onclick="selectPlayer('${p.agr}')">
-      <span>${p.name}</span>
-      ${p.stale?'<span class="suggestion-stale">Устарел</span>':''}
-      <span class="suggestion-agr">${p.agr.startsWith('NOAGR_')?'—':p.agr}</span>
-    </div>`).join('');
+  box.innerHTML=matches.map(p=>`<div class="suggestion-item" onclick="selectPlayer('${p.agr}')"><span>${p.name}</span>${p.stale?'<span class="suggestion-stale">Устарел</span>':''}<span class="suggestion-agr">${p.agr.startsWith('NOAGR_')?'—':p.agr}</span></div>`).join('');
   box.classList.add('active');
 }
-
 function selectPlayer(agr){
   const p=allData.find(x=>x.agr===agr);
   if(!p)return;
   document.getElementById('suggestions').classList.remove('active');
   document.getElementById('searchInput').value=p.name;
-  if(!p.history.length){
-    document.getElementById('notPaidName').textContent=p.name;
-    document.getElementById('notPaid').classList.add('active');
-    return;
-  }
+  if(!p.history.length){ document.getElementById('notPaidName').textContent=p.name; document.getElementById('notPaid').classList.add('active'); return; }
   showProfile(p);
 }
-
 function handleSearchBtn(){
   const btn=document.getElementById('searchBtn');
-  if(btn.textContent.trim()==='Сбросить'){
-    document.getElementById('searchInput').value='';
-    btn.textContent='Найти';hideAll();
-    document.getElementById('searchInput').focus();
-  }else doSearch();
+  if(btn.textContent.trim()==='Сбросить'){ document.getElementById('searchInput').value=''; btn.textContent='Найти'; hideAll(); document.getElementById('searchInput').focus(); } else doSearch();
 }
-
 function doSearch(){
   const q=document.getElementById('searchInput').value.trim().toLowerCase();
   if(!q)return;
@@ -1064,15 +594,9 @@ function doSearch(){
   hideAll();
   const match=allData.find(p=>p.name.toLowerCase().includes(q));
   if(!match){document.getElementById('notFound').classList.add('active');return;}
-  if(!match.history.length){
-    document.getElementById('notPaidName').textContent=match.name;
-    document.getElementById('notPaid').classList.add('active');
-    return;
-  }
+  if(!match.history.length){ document.getElementById('notPaidName').textContent=match.name; document.getElementById('notPaid').classList.add('active'); return; }
   showProfile(match);
 }
-
-// ── ПРОФИЛЬ ─────────────────────────────────────────────────
 function showProfile(player){
   hideAll();
   const h=player.history;
@@ -1082,314 +606,148 @@ function showProfile(player){
   const deltaClass=delta<0?'neg':delta>0?'pos':'';
   const deltaSign=delta>0?'+':'';
   const gindex=getGIndex(h);
-
   document.getElementById('playerName').textContent=player.name;
   document.getElementById('playerAgr').textContent=player.agr.startsWith('NOAGR_')?'—':player.agr;
   if(player.notPaid)document.getElementById('agrBadge').classList.add('active');
-
   const fromBest = gindex !== null ? parseFloat((curHI - gindex).toFixed(1)) : 0;
   const fromBestStr = fromBest > 0.001 ? `<span class="meta-sub">+${fromBest.toFixed(1)} от лучшего</span>` : '';
-  document.getElementById('playerMeta').innerHTML=`
-    <div class="meta-item">
-      <span class="meta-label">Текущий HI</span>
-      <span class="meta-value">${fmtHI(curHI)}</span>
-      ${fromBestStr}
-    </div>
-    <div class="meta-item">
-      <span class="meta-label">За период</span>
-      <span class="meta-value ${deltaClass}">${deltaSign}${delta}</span>
-    </div>`;
-
+  document.getElementById('playerMeta').innerHTML=`<div class="meta-item"><span class="meta-label">Текущий HI</span><span class="meta-value">${fmtHI(curHI)}</span>${fromBestStr}</div><div class="meta-item"><span class="meta-label">За период</span><span class="meta-value ${deltaClass}">${deltaSign}${delta}</span></div>`;
   const badge=document.getElementById('gindexBadge');
   const staleNote=document.getElementById('gindexStaleNote');
   document.getElementById('gindexValue').textContent=gindex!==null?fmtHI(gindex):'—';
-
   const gBest = document.getElementById('gindexBest');
   const gRight = document.getElementById('gindexRight');
   if(gRight) gRight.style.display='none';
   if(gBest) gBest.style.display='none';
-
-  if(player.stale){
-    badge.className='gindex-badge stale';
-    staleNote.style.display='block';
-    staleNote.textContent=`Stale · ${daysSince(player.lastChangeDate)} days`;
-  } else if(gindex!==null && Math.abs(curHI-gindex)<0.001){
-    badge.className='gindex-badge good';
-    staleNote.style.display='none';
-    if(gBest) gBest.style.display='block';
-  } else {
-    badge.className='gindex-badge good';
-    staleNote.style.display='none';
-  }
-
+  if(player.stale){ badge.className='gindex-badge stale'; staleNote.style.display='block'; staleNote.textContent=`Stale · ${daysSince(player.lastChangeDate)} days`; }
+  else if(gindex!==null && Math.abs(curHI-gindex)<0.001){ badge.className='gindex-badge good'; staleNote.style.display='none'; if(gBest) gBest.style.display='block'; }
+  else { badge.className='gindex-badge good'; staleNote.style.display='none'; }
   document.getElementById('statChanges').textContent=player.changes;
   document.getElementById('statDrops').textContent=player.drops;
   document.getElementById('statRises').textContent=player.rises;
-
   if(chartInstance)chartInstance.destroy();
   const ctx=document.getElementById('hiChart').getContext('2d');
   const lastDate=h[h.length-1].date;
   const pts=h.filter((d,i)=>i===0||d.date===lastDate||d.hi!==h[i-1].hi);
-  const labels=pts.map(d=>fmtDate(d.date));
   const values=pts.map(d=>d.hi);
   const ptDates=pts.map(d=>String(d.date));
   chartInstance = buildChart(ctx, ptDates, values, 'searchYB');
-
   const tbody=document.getElementById('historyBody');
   const filtered=h.filter((d,i)=>i===0||d.date===lastDate||d.hi!==h[i-1].hi);
   const bestHI=gindex;
-
   tbody.innerHTML=filtered.slice().reverse().map((d,i,arr)=>{
     const prev=arr[i+1];
     let deltaStr='',dc='zero';
-    if(prev){
-      const diff=(d.hi-prev.hi).toFixed(1);
-      if(diff<0){deltaStr=diff;dc='neg';}else if(diff>0){deltaStr='+'+diff;dc='pos';}else{deltaStr='—';dc='zero';}
-    }
+    if(prev){ const diff=(d.hi-prev.hi).toFixed(1); if(diff<0){deltaStr=diff;dc='neg';}else if(diff>0){deltaStr='+'+diff;dc='pos';}else{deltaStr='—';dc='zero';} }
     const isLast=d.date===lastDate;
     const isBest=bestHI!==null&&Math.abs(d.hi-bestHI)<0.001;
-    return`<tr class="${isBest?'best-row':''}" style="${isLast&&!isBest?'background:#fafafa':''}">
-      <td class="td-date">${fmtDate(d.date)}</td>
-      <td class="td-hi">${fmtHI(d.hi)}</td>
-      <td class="td-delta ${dc}">${deltaStr}</td>
-    </tr>`;
+    return`<tr class="${isBest?'best-row':''}" style="${isLast&&!isBest?'background:#fafafa':''}"><td class="td-date">${fmtDate(d.date)}</td><td class="td-hi">${fmtHI(d.hi)}</td><td class="td-delta ${dc}">${deltaStr}</td></tr>`;
   }).join('');
-
   currentProfileAgr = player.agr;
   updateFollowBtn();
   document.getElementById('profile').classList.add('active');
   document.getElementById('searchBtn').textContent='Сбросить';
   document.getElementById('profile').scrollIntoView({behavior:'smooth',block:'start'});
 }
-
-// ── СОБЫТИЯ ─────────────────────────────────────────────────
 document.getElementById('searchInput').addEventListener('input',e=>showSuggestions(e.target.value));
 document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
-document.addEventListener('click',e=>{
-  if(!e.target.closest('.search-wrap')&&!e.target.closest('.suggestions'))
-    document.getElementById('suggestions').classList.remove('active');
-});
-
-
-
-// ── ПОДПИСКИ ────────────────────────────────────────────────
+document.addEventListener('click',e=>{ if(!e.target.closest('.search-wrap')&&!e.target.closest('.suggestions')) document.getElementById('suggestions').classList.remove('active'); });
 let currentProfileAgr = null;
 let feedMode = 'all';
-
-function getFollows() {
-  try { return JSON.parse(localStorage.getItem('follows') || '[]'); } catch(e) { return []; }
-}
-
-function saveFollows(list) {
-  localStorage.setItem('follows', JSON.stringify(list));
-}
-
-function isFollowing(agr) {
-  return getFollows().includes(agr);
-}
-
+function getFollows() { try { return JSON.parse(localStorage.getItem('follows') || '[]'); } catch(e) { return []; } }
+function saveFollows(list) { localStorage.setItem('follows', JSON.stringify(list)); }
+function isFollowing(agr) { return getFollows().includes(agr); }
 function toggleFollow() {
   if (!currentProfileAgr) return;
   const myAgr = localStorage.getItem('my_agr');
   if (!myAgr) return;
-  if (currentProfileAgr === myAgr) return; // нельзя подписаться на себя
+  if (currentProfileAgr === myAgr) return;
   let follows = getFollows();
-  if (follows.includes(currentProfileAgr)) {
-    follows = follows.filter(a => a !== currentProfileAgr);
-  } else {
-    follows.push(currentProfileAgr);
-  }
-  saveFollows(follows);
-  updateFollowBtn();
-  updateFriendsCount();
-  renderFriendsList();
+  if (follows.includes(currentProfileAgr)) { follows = follows.filter(a => a !== currentProfileAgr); } else { follows.push(currentProfileAgr); }
+  saveFollows(follows); updateFollowBtn(); updateFriendsCount(); renderFriendsList();
 }
-
 function updateFollowBtn() {
   const btn = document.getElementById('followBtn');
   if (!btn || !currentProfileAgr) return;
   const myAgr = localStorage.getItem('my_agr');
   if (!myAgr) return;
-  if (currentProfileAgr === myAgr) {
-    btn.style.display = 'none';
-    return;
-  }
+  if (currentProfileAgr === myAgr) { btn.style.display = 'none'; return; }
   btn.style.display = 'inline-block';
-  if (isFollowing(currentProfileAgr)) {
-    btn.textContent = '✓ Слежу';
-    btn.classList.add('following');
-  } else {
-    btn.textContent = '+ Следить';
-    btn.classList.remove('following');
-  }
+  if (isFollowing(currentProfileAgr)) { btn.textContent = '✓ Слежу'; btn.classList.add('following'); } else { btn.textContent = '+ Следить'; btn.classList.remove('following'); }
 }
-
 function renderFriendsList() {
   const follows = getFollows();
   const countEl = document.getElementById('myFriendsCount');
   const body = document.getElementById('myFriendsBody');
   const empty = document.getElementById('myFriendsEmpty');
   if (!body) return;
-  
   if (countEl) countEl.textContent = follows.length ? '(' + follows.length + ')' : '';
-  
-  if (!follows.length) {
-    body.innerHTML = '';
-    if (empty) empty.style.display = 'block';
-    return;
-  }
+  if (!follows.length) { body.innerHTML = ''; if (empty) empty.style.display = 'block'; return; }
   if (empty) empty.style.display = 'none';
-  
-  body.innerHTML = '<div style="background:#fff;border-radius:var(--radius-lg);overflow:hidden;">' + follows.map(agr => {
+  body.innerHTML = '<div style="background:#fff;border-radius:10px;overflow:hidden;">' + follows.map(agr => {
     const p = allData.find(x => x.agr === agr);
     if (!p) return '';
     const curHI = p.history.length ? p.history[p.history.length-1].hi : null;
     const initials = p.name.split(' ').slice(0,2).map(w=>w[0]).join('');
-    return `<div class="friends-item">
-      <div class="friends-item-avatar">${initials}</div>
-      <div class="friends-item-info" onclick="goToPlayer('${agr}')">
-        <div class="friends-item-name">${p.name}</div>
-        <div class="friends-item-agr">${agr}</div>
-      </div>
-      <div class="friends-item-hi">${curHI !== null ? fmtHI(curHI) : '—'}</div>
-      <button class="friends-remove" onclick="removeFriend('${agr}')" title="Удалить">×</button>
-    </div>`;
+    return `<div class="friends-item"><div class="friends-item-avatar">${initials}</div><div class="friends-item-info" onclick="goToPlayer('${agr}')"><div class="friends-item-name">${p.name}</div><div class="friends-item-agr">${agr}</div></div><div class="friends-item-hi">${curHI !== null ? fmtHI(curHI) : '—'}</div><button class="friends-remove" onclick="removeFriend('${agr}')" title="Удалить">×</button></div>`;
   }).join('') + '</div>';
 }
-
-function clearAllFriends() {
-  if (!confirm('Удалить всех друзей?')) return;
-  saveFollows([]);
-  renderFriendsList();
-  updateFriendsCount();
-}
-
-function removeFriend(agr) {
-  let follows = getFollows().filter(a => a !== agr);
-  saveFollows(follows);
-  renderFriendsList();
-  updateFriendsCount();
-  // Обновляем кнопку если сейчас открыт этот профиль
-  if (currentProfileAgr === agr) updateFollowBtn();
-}
-
-function goToPlayer(agr) {
-  switchTab('search');
-  const p = allData.find(x => x.agr === agr);
-  if (!p) return;
-  document.getElementById('searchInput').value = p.name;
-  showProfile(p);
-}
-
-function updateFriendsCount() {
-  const n = getFollows().length;
-  const el = document.getElementById('friendsCount');
-  if (el) el.textContent = n > 0 ? '(' + n + ')' : '';
-}
-
+function clearAllFriends() { if (!confirm('Удалить всех друзей?')) return; saveFollows([]); renderFriendsList(); updateFriendsCount(); }
+function removeFriend(agr) { let follows = getFollows().filter(a => a !== agr); saveFollows(follows); renderFriendsList(); updateFriendsCount(); if (currentProfileAgr === agr) updateFollowBtn(); }
+function goToPlayer(agr) { switchTab('search'); const p = allData.find(x => x.agr === agr); if (!p) return; document.getElementById('searchInput').value = p.name; showProfile(p); }
+function updateFriendsCount() { const n = getFollows().length; const el = document.getElementById('friendsCount'); if (el) el.textContent = n > 0 ? '(' + n + ')' : ''; }
 function switchFeedTab(mode) {
   feedMode = mode;
   const all = document.getElementById('feedTabAll');
   const fr = document.getElementById('feedTabFriends');
-  if(mode==='all'){
-    all.style.background='#fff'; all.style.color='#000'; all.style.boxShadow='0 1px 4px rgba(0,0,0,0.12)';
-    fr.style.background='transparent'; fr.style.color='var(--muted)'; fr.style.boxShadow='none';
-  } else {
-    fr.style.background='#fff'; fr.style.color='#000'; fr.style.boxShadow='0 1px 4px rgba(0,0,0,0.12)';
-    all.style.background='transparent'; all.style.color='var(--muted)'; all.style.boxShadow='none';
-  }
-  if (mode === 'friends') {
-    buildFriendsFeed();
-  } else {
-    buildFeed();
-  }
+  if(mode==='all'){ all.style.background='#fff'; all.style.color='#000'; all.style.boxShadow='0 1px 4px rgba(0,0,0,0.12)'; fr.style.background='transparent'; fr.style.color='var(--ink3)'; fr.style.boxShadow='none'; }
+  else { fr.style.background='#fff'; fr.style.color='#000'; fr.style.boxShadow='0 1px 4px rgba(0,0,0,0.12)'; all.style.background='transparent'; all.style.color='var(--ink3)'; all.style.boxShadow='none'; }
+  if (mode === 'friends') { buildFriendsFeed(); } else { buildFeed(); }
 }
-
 function buildFriendsFeed() {
   const follows = getFollows();
   const el = document.getElementById('feedContent');
   document.getElementById('feedLoading').style.display = 'none';
   updateFriendsCount();
-
-  if (!follows.length) {
-    el.innerHTML = '<div style="font-size:13px;color:var(--muted);padding:20px 0">У вас пока нет друзей. Найдите игрока в поиске и нажмите "+ Следить"</div>';
-    return;
-  }
-
-  // Берём только друзей
+  if (!follows.length) { el.innerHTML = '<div style="font-size:13px;color:var(--ink3);padding:20px 0">У вас пока нет друзей. Найдите игрока в поиске и нажмите "+ Следить"</div>'; return; }
   const friends = allData.filter(p => follows.includes(p.agr));
-  if (!friends.length) {
-    el.innerHTML = '<div style="font-size:13px;color:var(--muted);padding:20px 0">Друзья не найдены в данных</div>';
-    return;
-  }
-
-  // Показываем только 2026 год
+  if (!friends.length) { el.innerHTML = '<div style="font-size:13px;color:var(--ink3);padding:20px 0">Друзья не найдены в данных</div>'; return; }
   const sortedDates = [...allDates].filter(d => d.startsWith('2026')).sort().reverse();
-
   let html = '';
   for (const date of sortedDates) {
     const prevDateIdx = allDates.indexOf(date) - 1;
     const prevDate = prevDateIdx >= 0 ? allDates[prevDateIdx] : null;
-
     const changed = [];
     for (const p of friends) {
       const cur = p.history.find(h => h.date === date);
       if (!cur) continue;
       const prev = prevDate ? p.history.find(h => h.date === prevDate) : null;
       const diff = prev ? parseFloat((cur.hi - prev.hi).toFixed(1)) : null;
-      // Показываем только если изменился HI
-      if (diff === null || Math.abs(diff) > 0.001) {
-        changed.push({ p, hi: cur.hi, diff });
-      }
+      if (diff === null || Math.abs(diff) > 0.001) { changed.push({ p, hi: cur.hi, diff }); }
     }
-
     if (!changed.length) continue;
-
     const livFmt2 = iso => { const [y,m,d]=iso.split('-'); const mn=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']; return parseInt(d)+' '+mn[parseInt(m)-1]+' '+y; };
-    html += `<div class="feed-day-block"><div class="feed-day-header">${livFmt2(date)}</div>
-      <div class="feed-list" style="background:#fff;border-radius:var(--radius-lg);overflow:hidden;">`;
+    html += `<div class="feed-day-block"><div class="feed-day-header">${livFmt2(date)}</div><div class="feed-list" style="background:#fff;border-radius:10px;overflow:hidden;">`;
     html += changed.map(({p, hi, diff}) => {
       const dc = diff === null ? 'zero' : diff < 0 ? 'neg' : diff > 0 ? 'pos' : 'zero';
       const sign = diff !== null && diff > 0 ? '+' : '';
       const deltaStr = diff !== null && Math.abs(diff) > 0.001 ? `${sign}${diff.toFixed(1)}` : '—';
-      return `<div class="feed-item" style="cursor:pointer" onclick="goToPlayer('${p.agr}')">
-        <div class="feed-item-info">
-          <div class="feed-item-name">${p.name}</div>
-          <div class="feed-item-sub">${p.agr}</div>
-        </div>
-        <div class="feed-item-hi">${fmtHI(hi)}</div>
-        <div class="feed-item-delta ${dc}">${deltaStr}</div>
-      </div>`;
+      return `<div class="feed-item" style="cursor:pointer" onclick="goToPlayer('${p.agr}')"><div class="feed-item-info"><div class="feed-item-name">${p.name}</div><div class="feed-item-sub">${p.agr}</div></div><div class="feed-item-hi">${fmtHI(hi)}</div><div class="feed-item-delta ${dc}">${deltaStr}</div></div>`;
     }).join('');
     html += `</div></div>`;
   }
-
-  el.innerHTML = html || '<div style="font-size:13px;color:var(--muted);padding:20px 0">У ваших друзей пока нет данных</div>';
+  el.innerHTML = html || '<div style="font-size:13px;color:var(--ink3);padding:20px 0">У ваших друзей пока нет данных</div>';
 }
-
-// ── МОЙ ПРОФИЛЬ ─────────────────────────────────────────────
 let myChartInstance = null;
-
 function loadMyProfile() {
   const agr = localStorage.getItem('my_agr');
-  if (!agr) {
-    document.getElementById('mySetup').style.display = 'block';
-    document.getElementById('myProfileActive').classList.remove('active');
-    return;
-  }
+  if (!agr) { document.getElementById('mySetup').style.display = 'block'; document.getElementById('myProfileActive').classList.remove('active'); return; }
   if (!allData.length) return;
   const p = allData.find(x => x.agr === agr);
-  if (!p) {
-    // AGR не найден в данных — сбрасываем
-    localStorage.removeItem('my_agr');
-    document.getElementById('mySetup').style.display = 'block';
-    document.getElementById('myProfileActive').classList.remove('active');
-    return;
-  }
+  if (!p) { localStorage.removeItem('my_agr'); document.getElementById('mySetup').style.display = 'block'; document.getElementById('myProfileActive').classList.remove('active'); return; }
   document.getElementById('mySetup').style.display = 'none';
   showMyProfile(p);
 }
-
 function previewMyAgr() {
   const q = document.getElementById('myAgrInput').value.trim().toUpperCase();
   const preview = document.getElementById('myPreview');
@@ -1400,111 +758,56 @@ function previewMyAgr() {
   document.getElementById('myPreviewAgr').textContent = match.agr;
   preview.classList.add('active');
 }
-
 function saveMyProfile() {
   const q = document.getElementById('myAgrInput').value.trim().toUpperCase();
   if (!q) { alert('Введи АГР номер, например RU009590'); return; }
   const match = allData.find(p => p.agr.toUpperCase() === q);
-  if (!match) { 
-    // Попробуем частичное совпадение
+  if (!match) {
     const partial = allData.find(p => p.agr.toUpperCase().includes(q) || p.name.toUpperCase().includes(q));
     if (!partial) { alert('Игрок не найден. Введи точный АГР номер, например RU009590'); return; }
-    localStorage.setItem('my_agr', partial.agr);
-    document.getElementById('mySetup').style.display = 'none';
-    showMyProfile(partial);
-    return;
+    localStorage.setItem('my_agr', partial.agr); document.getElementById('mySetup').style.display = 'none'; showMyProfile(partial); return;
   }
-  localStorage.setItem('my_agr', match.agr);
-  document.getElementById('mySetup').style.display = 'none';
-  showMyProfile(match);
+  localStorage.setItem('my_agr', match.agr); document.getElementById('mySetup').style.display = 'none'; showMyProfile(match);
 }
-
-function resetPdfHistory() {
-  localStorage.removeItem('my_pdf_history');
-  localStorage.removeItem('my_pdf_ts');
-  const statusEl = document.getElementById('pdfStatus');
-  if (statusEl) statusEl.style.display = 'none';
-  const pasteSection = document.getElementById('pasteSection');
-  if (pasteSection) pasteSection.style.display = 'block';
-  const agr = localStorage.getItem('my_agr');
-  const p = allData.find(x => x.agr === agr);
-  if (p) showMyProfile(p);
-}
-
 function forceClearProfile() {
-  localStorage.removeItem('my_agr');
-  localStorage.removeItem('my_pdf_history');
-  localStorage.removeItem('my_pdf_ts');
-  document.getElementById('myAgrInput').value = '';
-  document.getElementById('myPreview').classList.remove('active');
-  document.getElementById('mySetup').style.display = 'block';
-  document.getElementById('myProfileActive').classList.remove('active');
+  localStorage.removeItem('my_agr'); localStorage.removeItem('my_pdf_history'); localStorage.removeItem('my_pdf_ts');
+  document.getElementById('myAgrInput').value = ''; document.getElementById('myPreview').classList.remove('active');
+  document.getElementById('mySetup').style.display = 'block'; document.getElementById('myProfileActive').classList.remove('active');
 }
-
 function resetMyProfile() {
   if (!confirm('Сменить профиль? PDF данные этого профиля будут удалены.')) return;
-  localStorage.removeItem('my_agr');
-  localStorage.removeItem('my_pdf_history');
-  localStorage.removeItem('my_pdf_ts');
-  document.getElementById('mySetup').style.display = 'block';
-  document.getElementById('myProfileActive').classList.remove('active');
-  document.getElementById('myAgrInput').value = '';
-  document.getElementById('myPreview').classList.remove('active');
-  // Сбрасываем статус PDF
+  localStorage.removeItem('my_agr'); localStorage.removeItem('my_pdf_history'); localStorage.removeItem('my_pdf_ts');
+  document.getElementById('mySetup').style.display = 'block'; document.getElementById('myProfileActive').classList.remove('active');
+  document.getElementById('myAgrInput').value = ''; document.getElementById('myPreview').classList.remove('active');
   const pdfStatus = document.getElementById('pdfStatus');
   if (pdfStatus) { pdfStatus.textContent = ''; pdfStatus.classList.remove('active'); }
-  const pdfLabel = document.getElementById('pdfLabel');
-  if (pdfLabel) pdfLabel.textContent = '↑ Загрузить выписку PDF с hcp.rusgolf.ru';
 }
-
 function showMyProfile(player) {
   document.getElementById('mySetup').style.display = 'none';
   document.getElementById('myProfileActive').classList.add('active');
-
-  // Скрываем форму вставки
   const pasteSection = document.getElementById('pasteSection');
   if (pasteSection) pasteSection.style.display = 'none';
-
-  // Объединяем историю из Pivot + раунды из PDF/хардкод
   let h = [...player.history];
-  
-  // Загружаем историю раундов
   let pdfRounds = [];
   const myAgr = localStorage.getItem('my_agr') || 'RU009590';
-  if (myAgr === 'RU009590' || player.agr === 'RU009590') {
-    pdfRounds = TIMAKOV_HISTORY;
-  } else {
-    try { pdfRounds = JSON.parse(localStorage.getItem('my_pdf_history') || '[]'); } catch(e) {}
-  }
-  
+  if (myAgr === 'RU009590' || player.agr === 'RU009590') { pdfRounds = TIMAKOV_HISTORY; }
+  else { try { pdfRounds = JSON.parse(localStorage.getItem('my_pdf_history') || '[]'); } catch(e) {} }
   if (pdfRounds.length) {
     const pivotDates = new Set(h.map(x => x.date));
-    for (const pt of pdfRounds) {
-      if (!pivotDates.has(pt.date)) h.push(pt);
-    }
+    for (const pt of pdfRounds) { if (!pivotDates.has(pt.date)) h.push(pt); }
     h.sort((a,b) => a.date.localeCompare(b.date));
     const statusEl = document.getElementById('pdfStatus');
-    if (statusEl) {
-      statusEl.innerHTML = '✓ ' + pdfRounds.length + ' раундов из АГР';
-      statusEl.style.display = 'block';
-    }
+    if (statusEl) { statusEl.innerHTML = '✓ ' + pdfRounds.length + ' раундов из АГР'; statusEl.style.display = 'block'; }
   }
-
   const curHI = h[h.length-1].hi;
-  // За период — от первого раунда в PDF до текущего
   const firstHI = pdfRounds.length ? pdfRounds[0].hi : h[0].hi;
   const delta = (curHI - firstHI).toFixed(1);
   const gindex = Math.min(...h.map(x=>x.hi));
-
   document.getElementById('myName').textContent = player.name;
   document.getElementById('myAgrDisplay').textContent = player.agr;
   const myFromBest = parseFloat((curHI - gindex).toFixed(1));
   const myFromBestStr = myFromBest > 0.001 ? `<span class="meta-sub">+${myFromBest.toFixed(1)} от лучшего</span>` : '';
-  document.getElementById('myMeta').innerHTML = `
-    <div class="meta-item"><span class="meta-label">Текущий HI</span><span class="meta-value">${fmtHI(curHI)}</span>${myFromBestStr}</div>
-    <div class="meta-item"><span class="meta-label">За период</span><span class="meta-value ${delta<0?'neg':delta>0?'pos':''}">${delta>0?'+':''}${delta}</span></div>
-    <div class="meta-item"><span class="meta-label">Раундов</span><span class="meta-value">${h.length}</span></div>`;
-
+  document.getElementById('myMeta').innerHTML = `<div class="meta-item"><span class="meta-label">Текущий HI</span><span class="meta-value">${fmtHI(curHI)}</span>${myFromBestStr}</div><div class="meta-item"><span class="meta-label">За период</span><span class="meta-value ${delta<0?'neg':delta>0?'pos':''}">${delta>0?'+':''}${delta}</span></div><div class="meta-item"><span class="meta-label">Раундов</span><span class="meta-value">${h.length}</span></div>`;
   document.getElementById('myGindexValue').textContent = fmtHI(gindex);
   const badge = document.getElementById('myGindexBadge');
   const myGRight = document.getElementById('myGindexRight');
@@ -1512,446 +815,122 @@ function showMyProfile(player) {
   const myGDelta = document.getElementById('myGindexDelta');
   if(myGRight) myGRight.style.display='none';
   if(myGBest) myGBest.style.display='none';
-
-  if (player.stale) {
-    badge.className = 'gindex-badge stale';
-    document.getElementById('myStaleNote').style.display = 'block';
-    document.getElementById('myStaleNote').textContent = 'Stale · ' + daysSince(player.lastChangeDate) + ' days';
-  } else if(Math.abs(curHI-gindex)<0.001) {
-    badge.className = 'gindex-badge good';
-    document.getElementById('myStaleNote').style.display = 'none';
-    if(myGBest) myGBest.style.display='block';
-  } else {
-    badge.className = curHI > gindex ? 'gindex-badge bad' : 'gindex-badge good';
-    document.getElementById('myStaleNote').style.display = 'none';
-    if(curHI > gindex && myGRight && myGDelta){
-      myGDelta.textContent = '+' + (curHI-gindex).toFixed(1);
-      myGRight.style.display = 'block';
-    }
-  }
-
+  if (player.stale) { badge.className = 'gindex-badge stale'; document.getElementById('myStaleNote').style.display = 'block'; document.getElementById('myStaleNote').textContent = 'Stale · ' + daysSince(player.lastChangeDate) + ' days'; }
+  else if(Math.abs(curHI-gindex)<0.001) { badge.className = 'gindex-badge good'; document.getElementById('myStaleNote').style.display = 'none'; if(myGBest) myGBest.style.display='block'; }
+  else { badge.className = curHI > gindex ? 'gindex-badge bad' : 'gindex-badge good'; document.getElementById('myStaleNote').style.display = 'none'; if(curHI > gindex && myGRight && myGDelta){ myGDelta.textContent = '+' + (curHI-gindex).toFixed(1); myGRight.style.display = 'block'; } }
   renderFriendsList();
-  // Пересчитываем статистику из полной истории (PDF + Pivot)
   let changes = 0, drops = 0, rises = 0;
-  for (let i = 1; i < h.length; i++) {
-    if (Math.abs(h[i].hi - h[i-1].hi) > 0.001) {
-      changes++;
-      if (h[i].hi < h[i-1].hi) drops++;
-      else rises++;
-    }
-  }
+  for (let i = 1; i < h.length; i++) { if (Math.abs(h[i].hi - h[i-1].hi) > 0.001) { changes++; if (h[i].hi < h[i-1].hi) drops++; else rises++; } }
   document.getElementById('myChanges').textContent = changes;
   document.getElementById('myDrops').textContent = drops;
   document.getElementById('myRises').textContent = rises;
-
-  // Chart
   if (myChartInstance) myChartInstance.destroy();
   const ctx = document.getElementById('myChart').getContext('2d');
   const pts = h.filter((d,i) => i===0 || d.date===h[h.length-1].date || d.hi!==h[i-1].hi);
-  const labels = pts.map(d => fmtDate(d.date));
   const values = pts.map(d => d.hi);
-
   const myIsoDates = pts.map(d => d.date);
   myChartInstance = buildChart(ctx, myIsoDates, values, 'myYB');
-
-  // History table — показываем ВСЕ раунды из PDF, или только точки изменений из Pivot
   const bestHI = gindex;
   let tableRows = [];
-  
-  // Таблица — всегда показываем pdfRounds если есть (с турниром/полем)
   if (pdfRounds.length) {
     tableRows = [...pdfRounds].reverse();
-    document.getElementById('myHistoryTable').querySelector('thead tr').innerHTML =
-      '<th>Дата</th><th>Турнир</th><th>Поле</th><th>Гросс</th><th>Stbl</th><th>HI</th><th>Δ</th>';
+    document.getElementById('myHistoryTable').querySelector('thead tr').innerHTML = '<th>Дата</th><th>Турнир</th><th>Поле</th><th>Гросс</th><th>Stbl</th><th>HI</th><th>Δ</th>';
   } else {
     tableRows = h.slice().reverse();
-    document.getElementById('myHistoryTable').querySelector('thead tr').innerHTML =
-      '<th>Дата</th><th>HI</th><th>Изменение</th>';
+    document.getElementById('myHistoryTable').querySelector('thead tr').innerHTML = '<th>Дата</th><th>HI</th><th>Изменение</th>';
   }
-
   document.getElementById('myHistoryBody').innerHTML = tableRows.map((d,i,arr) => {
     const prev = arr[i+1];
     const curHIval = d.hi;
     const prevHIval = prev ? prev.hi : null;
     let deltaStr='', dc='zero';
-    if (prevHIval !== null) {
-      const diff = (curHIval - prevHIval).toFixed(1);
-      if(diff<0){deltaStr=diff;dc='neg';}else if(diff>0){deltaStr='+'+diff;dc='pos';}else{deltaStr='—';dc='zero';}
-    }
+    if (prevHIval !== null) { const diff = (curHIval - prevHIval).toFixed(1); if(diff<0){deltaStr=diff;dc='neg';}else if(diff>0){deltaStr='+'+diff;dc='pos';}else{deltaStr='—';dc='zero';} }
     const isBest = Math.abs(curHIval - bestHI) < 0.001;
-    
     if (pdfRounds.length && d.tournament !== undefined) {
-      return `<tr class="${isBest?'best-row':''}">
-        <td class="td-date">${fmtDate(d.date)}</td>
-        <td class="td-tournament">${d.tournament||'—'}</td>
-        <td style="font-size:11px;color:var(--muted);">${d.club||'—'}</td>
-        <td class="td-date">${d.score||'—'}</td>
-        <td class="td-date">${d.stbl!=null?d.stbl:'—'}</td>
-        <td class="td-hi">${fmtHI(curHIval)}</td>
-        <td class="td-delta ${dc}">${deltaStr}</td>
-      </tr>`;
+      return `<tr class="${isBest?'best-row':''}"><td class="td-date">${fmtDate(d.date)}</td><td class="td-tournament">${d.tournament||'—'}</td><td style="font-size:11px;color:var(--ink3);">${d.club||'—'}</td><td class="td-date">${d.score||'—'}</td><td class="td-date">${d.stbl!=null?d.stbl:'—'}</td><td class="td-hi">${fmtHI(curHIval)}</td><td class="td-delta ${dc}">${deltaStr}</td></tr>`;
     } else {
-      return `<tr class="${isBest?'best-row':''}">
-        <td class="td-date">${fmtDate(d.date)}</td>
-        <td class="td-hi">${fmtHI(curHIval)}</td>
-        <td class="td-delta ${dc}">${deltaStr}</td>
-      </tr>`;
+      return `<tr class="${isBest?'best-row':''}"><td class="td-date">${fmtDate(d.date)}</td><td class="td-hi">${fmtHI(curHIval)}</td><td class="td-delta ${dc}">${deltaStr}</td></tr>`;
     }
   }).join('');
 }
-
-// PDF парсинг
 function handlePastedText() {
   const text = document.getElementById('pdfPasteInput').value.trim();
   if (!text) { alert('Вставь текст из выписки АГР'); return; }
-  
   const history = parseTextHistory(text);
-  if (!history.length) {
-    alert('Не удалось распознать раунды. Убедись что скопировал таблицу с hcp.rusgolf.ru');
-    return;
-  }
-  
+  if (!history.length) { alert('Не удалось распознать раунды. Убедись что скопировал таблицу с hcp.rusgolf.ru'); return; }
   const now = new Date();
   const ts = now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
   localStorage.setItem('my_pdf_history', JSON.stringify(history));
   localStorage.setItem('my_pdf_ts', ts);
-  
   const statusEl = document.getElementById('pdfStatus');
   statusEl.innerHTML = '✓ Загружено ' + history.length + ' раундов · <span class="pdf-ts">' + ts + '</span>';
   statusEl.style.display = 'block';
   document.getElementById('pasteSection').style.display = 'none';
-  
   const agr = localStorage.getItem('my_agr');
   const p = allData.find(x => x.agr === agr);
   if (p) showMyProfile(p);
 }
-
 function parseTextHistory(text) {
-  // Формат с hcp.rusgolf.ru — дата на одной строке, данные на следующих
-  // Ищем все даты как якоря, между ними берём блок текста
   const rounds = [];
   const lines = text.split(/\n/).map(l => l.trim()).filter(Boolean);
-  
-  // Находим индексы строк с датами
   const dateIndices = [];
-  for (let i = 0; i < lines.length; i++) {
-    if (/^\d{2}\.\d{2}\.\d{4}/.test(lines[i])) {
-      dateIndices.push(i);
-    }
-  }
-  
+  for (let i = 0; i < lines.length; i++) { if (/^\d{2}\.\d{2}\.\d{4}/.test(lines[i])) { dateIndices.push(i); } }
   for (let di = 0; di < dateIndices.length; di++) {
     const idx = dateIndices[di];
     const nextIdx = di+1 < dateIndices.length ? dateIndices[di+1] : lines.length;
-    
     const dateLine = lines[idx];
     const dm = dateLine.match(/^(\d{2})\.(\d{2})\.(\d{4})/);
     if (!dm) continue;
     const dateISO = dm[3] + '-' + dm[2] + '-' + dm[1];
-    
-    // Блок строк этого раунда
     const block = lines.slice(idx, nextIdx).join(' ');
-    
-    // Формат
     const fmtMatch = block.match(/(СФД|ИСУ|SFD|ISU)-?\d*/);
     const format = fmtMatch ? fmtMatch[0] : '';
-    
-    // Все десятичные числа (с запятой или точкой)
     const decimals = [];
     const decRe = /(\d{1,2})[,\.](\d{1})(?!\d)/g;
     let dm2;
-    while ((dm2 = decRe.exec(block)) !== null) {
-      const val = parseFloat(dm2[1] + '.' + dm2[2]);
-      if (val > 0 && val < 60) decimals.push(val);
-    }
+    while ((dm2 = decRe.exec(block)) !== null) { const val = parseFloat(dm2[1] + '.' + dm2[2]); if (val > 0 && val < 60) decimals.push(val); }
     if (!decimals.length) continue;
-    
-    // HI = последнее десятичное число
     const hi = decimals[decimals.length - 1];
-    
-    // Целые числа
     const ints = [];
     const intRe = /\b(\d{2,3})\b/g;
     let im;
-    while ((im = intRe.exec(block)) !== null) {
-      ints.push(parseInt(im[1]));
-    }
-    
-    // Score = целое 60-160
+    while ((im = intRe.exec(block)) !== null) { ints.push(parseInt(im[1])); }
     const score = ints.find(n => n >= 60 && n <= 160) || null;
-    
-    // Stbl = целое 0-60 после score
     let stbl = null;
-    if (score !== null) {
-      const si = ints.indexOf(score);
-      for (let j = si+1; j < ints.length; j++) {
-        if (ints[j] >= 0 && ints[j] <= 60) { stbl = ints[j]; break; }
-      }
-    }
-    
-    // Турнир и клуб из строк между датой и строкой с форматом
+    if (score !== null) { const si = ints.indexOf(score); for (let j = si+1; j < ints.length; j++) { if (ints[j] >= 0 && ints[j] <= 60) { stbl = ints[j]; break; } } }
     let tournament = '', club = '';
     const blockLines = lines.slice(idx+1, nextIdx);
     const fmtLineIdx = blockLines.findIndex(l => /(СФД|ИСУ|SFD|ISU)/.test(l));
     if (fmtLineIdx > 0) {
       const textLines = blockLines.slice(0, fmtLineIdx).filter(l => !/^\d/.test(l) && l.length > 2);
-      if (textLines.length >= 2) { tournament = textLines[0]; club = textLines[1]; }
-      else if (textLines.length === 1) { tournament = textLines[0]; }
+      if (textLines.length >= 2) { tournament = textLines[0]; club = textLines[1]; } else if (textLines.length === 1) { tournament = textLines[0]; }
     }
-    
     rounds.push({ date: dateISO, hi, score, stbl, tournament, club, format });
   }
-  
   const seen = new Set();
-  return rounds.filter(r => { if(seen.has(r.date))return false; seen.add(r.date); return true; })
-               .sort((a,b) => a.date.localeCompare(b.date));
+  return rounds.filter(r => { if(seen.has(r.date))return false; seen.add(r.date); return true; }).sort((a,b) => a.date.localeCompare(b.date));
 }
-
-async function handlePdfUpload(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  document.getElementById('pdfLabel').textContent = 'Читаем PDF...';
-
-  try {
-    const text = await extractTextFromPdf(file);
-    const history = parsePdfHistory(text);
-    if (history.length === 0) {
-      document.getElementById('pdfLabel').textContent = 'Не удалось прочитать историю. Попробуй другой файл.';
-      return;
-    }
-    localStorage.setItem('my_pdf_history', JSON.stringify(history));
-    const now = new Date();
-    const ts = now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
-    localStorage.setItem('my_pdf_ts', ts);
-    document.getElementById('pdfStatus').innerHTML = '✓ Загружено ' + history.length + ' раундов · <span class="pdf-ts">' + ts + '</span>';
-    document.getElementById('pdfStatus').classList.add('active');
-    document.getElementById('pdfLabel').textContent = '↑ Обновить выписку PDF';
-    const agr = localStorage.getItem('my_agr');
-    if (!agr) return;
-    const p = allData.find(x => x.agr === agr);
-    if (p) showMyProfile(p);
-  } catch(e) {
-    document.getElementById('pdfLabel').textContent = 'Ошибка чтения PDF: ' + e.message;
-    console.error(e);
-  }
-}
-
-async function extractTextFromPdf(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      try {
-        const bytes = new Uint8Array(e.target.result);
-        let raw = '';
-        for (let i = 0; i < bytes.length; i++) {
-          raw += String.fromCharCode(bytes[i]);
-        }
-        
-        let text = '';
-        
-        // Ищем текстовые блоки BT...ET
-        const btEt = raw.match(/BT[\s\S]*?ET/g) || [];
-        for (const block of btEt) {
-          // Строки в скобках (текст PDF)
-          const re = /\(([^\)]*(?:\.[^\)]*)*)\)/g;
-          let m;
-          while ((m = re.exec(block)) !== null) {
-            text += m[1] + ' ';
-          }
-          // Hex строки <...>
-          const hexRe = /<([0-9A-Fa-f]+)>/g;
-          let hm;
-          while ((hm = hexRe.exec(block)) !== null) {
-            const hex = hm[1];
-            for (let i = 0; i < hex.length; i += 2) {
-              const code = parseInt(hex.substr(i, 2), 16);
-              if (code > 31) text += String.fromCharCode(code);
-            }
-            text += ' ';
-          }
-        }
-        
-        // Если мало — берём все строки в скобках из всего файла
-        if (text.trim().length < 50) {
-          const re2 = /\(([^)]{2,80})\)/g;
-          let m2;
-          while ((m2 = re2.exec(raw)) !== null) {
-            text += m2[1] + ' ';
-          }
-        }
-        
-        resolve(text);
-      } catch(err) {
-        reject(err);
-      }
-    };
-    reader.onerror = () => reject(new Error('Ошибка чтения файла'));
-    reader.readAsArrayBuffer(file);
-  });
-}
-
-function parsePdfHistory(text) {
-  // Сначала пробуем распарсить как JSON (ответ от Claude API)
-  try {
-    const clean = text.replace(/```json|```/g, '').trim();
-    const parsed = JSON.parse(clean);
-    if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].date) {
-      return parsed.filter(r => r.date && r.hi).map(r => ({
-        date: r.date,
-        hi: parseFloat(r.hi),
-        score: r.score || null,
-        stbl: r.stbl || null,
-        tournament: r.tournament || '',
-        club: r.club || '',
-        format: r.format || ''
-      })).sort((a,b) => a.date.localeCompare(b.date));
-    }
-  } catch(e) {}
-  
-  // Fallback — старый парсер
-  return parsePdfHistoryFallback(text);
-}
-
-function parsePdfHistoryFallback(text) {
-  // PDF.js возвращает текст как поток токенов разделённых пробелами.
-  // Стратегия: ищем все вхождения дат DD.MM.YYYY как якоря,
-  // между ними берём кусок и вытаскиваем нужные поля.
-  
-  const rounds = [];
-  // Нормализуем текст — убираем лишние пробелы
-  const t = text.replace(/\s+/g, ' ');
-  
-  const dateRe = /(\d{2})\.(\d{2})\.(\d{4})/g;
-  const positions = [];
-  let m;
-  while ((m = dateRe.exec(t)) !== null) {
-    // Пропускаем дату "Generated by" в конце
-    const before = t.slice(Math.max(0, m.index-20), m.index);
-    if (/generated|05\/26/i.test(before)) continue;
-    positions.push({ idx: m.index, end: m.index + m[0].length, d: m[1], mo: m[2], y: m[3], raw: m[0] });
-  }
-  
-  for (let i = 0; i < positions.length; i++) {
-    const pos = positions[i];
-    const nextIdx = i+1 < positions.length ? positions[i+1].idx : t.length;
-    const chunk = t.slice(pos.idx, nextIdx);
-    
-    const dateISO = `${pos.y}-${pos.mo}-${pos.d}`;
-    
-    // Формат игры
-    const fmtMatch = chunk.match(/(СФД|ИСУ|SFD|ISU)-?(\d+)/);
-    const format = fmtMatch ? fmtMatch[0] : '';
-    
-    // Все десятичные числа (с запятой или точкой)
-    const decimals = [];
-    const decRe = /(\d{1,3})[,\.](\d{1})/g;
-    let dm;
-    while ((dm = decRe.exec(chunk)) !== null) {
-      decimals.push(parseFloat(dm[1] + '.' + dm[2]));
-    }
-    
-    // Все целые числа 2+ цифры
-    const ints = [];
-    const intRe = /(\d{2,3})/g;
-    let im;
-    while ((im = intRe.exec(chunk)) !== null) {
-      ints.push(parseInt(im[1]));
-    }
-    
-    // HI финальный = последнее десятичное число 0 < x < 60
-    let hi = null;
-    for (let j = decimals.length - 1; j >= 0; j--) {
-      if (decimals[j] > 0 && decimals[j] < 60) { hi = decimals[j]; break; }
-    }
-    if (hi === null) continue;
-    
-    // Score (гросс) = целое 60-160
-    let score = null;
-    for (let j = 0; j < ints.length; j++) {
-      if (ints[j] >= 60 && ints[j] <= 160) { score = ints[j]; break; }
-    }
-    
-    // Stableford = целое 0-60, идёт после Score в массиве
-    let stbl = null;
-    if (score !== null) {
-      const si = ints.indexOf(score);
-      for (let j = si + 1; j < ints.length; j++) {
-        if (ints[j] >= 0 && ints[j] <= 60) { stbl = ints[j]; break; }
-      }
-    }
-    
-    // Турнир и поле: текст до формата, после даты
-    let tournament = '', club = '';
-    if (fmtMatch) {
-      const fmtIdx = chunk.indexOf(fmtMatch[0]);
-      const between = chunk.slice(pos.raw.length, fmtIdx).trim();
-      // Разбиваем: слова до последнего "гольф" упоминания = поле
-      const words = between.split(/\s{2,}/).map(s => s.trim()).filter(Boolean);
-      if (words.length >= 2) {
-        club = words[words.length - 1];
-        tournament = words.slice(0, -1).join(' ');
-      } else if (words.length === 1) {
-        tournament = words[0];
-      } else {
-        // Пробуем по паттерну: ищем "клуб" или "гольф"
-        const clubMatch = between.match(/([^\d]+(?:клуб|гольф|golf|club|country)[^\d]*)/i);
-        if (clubMatch) {
-          club = clubMatch[0].trim();
-          tournament = between.replace(clubMatch[0], '').trim();
-        } else {
-          tournament = between.trim();
-        }
-      }
-    }
-    
-    rounds.push({
-      date: dateISO,
-      hi,
-      score,
-      stbl,
-      tournament: tournament.trim().slice(0, 80),
-      club: club.trim().slice(0, 60),
-      format
-    });
-  }
-  
-  // Убираем дубли по дате
-  const seen = new Set();
-  return rounds.filter(r => {
-    if (seen.has(r.date)) return false;
-    seen.add(r.date);
-    return true;
-  }).sort((a, b) => a.date.localeCompare(b.date));
-}
-
-// ── INIT ────────────────────────────────────────────────────
 async function init(forceRefresh){
   document.getElementById('loading').classList.add('active');
   document.getElementById('refreshWrap').style.display='none';
   document.getElementById('searchInput').disabled=true;
-
-  // Проверяем кеш
   const CACHE_KEY='gindex_data';
   const CACHE_TS='gindex_ts';
   const CACHE_TTL=60*60*1000;
-  let fromCache=false;
   try{
     const ts=parseInt(localStorage.getItem(CACHE_TS)||'0');
     if(!forceRefresh&&localStorage.getItem(CACHE_KEY)&&Date.now()-ts<CACHE_TTL){
-      fromCache=true;
       const age=Math.round((Date.now()-ts)/60000);
       document.getElementById('loadingText').textContent='Загружаем из кеша...';
       document.getElementById('cacheNote').style.display='inline';
       document.getElementById('cacheNote').textContent=`(данные ${age} мин. назад)`;
     }
   }catch(e){}
-
   if(forceRefresh){
     try{localStorage.removeItem(CACHE_KEY);localStorage.removeItem(CACHE_TS);}catch(e){}
     document.getElementById('loadingText').textContent='Обновляем данные...';
     document.getElementById('cacheNote').style.display='none';
   }
-
   try{
     const rows=await loadData();
     allData=parseData(rows);
@@ -1966,15 +945,8 @@ async function init(forceRefresh){
     console.error(e);
   }
 }
-
-function refreshData(){
-  hideAll();
-  document.getElementById('searchInput').value='';
-  init(true);
-}
-
+function refreshData(){ hideAll(); document.getElementById('searchInput').value=''; init(true); }
 init();
-
 </script>
 </body>
 </html>
