@@ -224,6 +224,9 @@ footer p { font-size:11px; color:var(--ink3); font-family:'Barlow Condensed',san
   <div class="status-card" id="notFound"><h3>Нет в системе</h3><p>Игрок не найден в реестре АГР</p></div>
   <div class="status-card" id="notPaid"><h3 id="notPaidName"></h3><p>Не оплачен АГР — гандикап не присвоен</p></div>
   <div class="profile" id="profile">
+    <div style="margin-bottom:12px;">
+      <button id="backBtn" onclick="goBack()" style="display:none;background:transparent;border:none;color:var(--ink3);font-size:13px;cursor:pointer;padding:0;font-family:'Inter',sans-serif;">← Назад</button>
+    </div>
     <div class="player-header">
       <div class="player-name" id="playerName"></div>
       <div class="player-agr" id="playerAgr"></div>
@@ -537,17 +540,17 @@ function buildFeed(){
     html+=`<div class="feed-day-block"><div class="feed-day-header">${dayLabel}</div>`;
     if(newPlayers.length){
       html+=`<div class="feed-section"><div class="feed-section-header"><span class="feed-count c-blue">${newPlayers.length}</span><span class="feed-title c-blue">Новых игроков</span></div><div class="feed-list">`;
-      html+=newPlayers.map(p=>{ const hi=p.history.find(h=>h.date===date)?.hi; return`<div class="feed-item"><div class="feed-item-info"><div class="feed-item-name">${p.name}</div><div class="feed-item-sub">${p.agr.startsWith('NOAGR_')?'—':p.agr}</div></div><div class="feed-item-hi">${fmtHI(hi)}</div></div>`; }).join('');
+      html+=newPlayers.map(p=>{ const hi=p.history.find(h=>h.date===date)?.hi; return`<div class="feed-item" onclick="showProfileFromFeed('${p.agr}','feed')"><div class="feed-item-info"><div class="feed-item-name">${p.name}</div><div class="feed-item-sub">${p.agr.startsWith('NOAGR_')?'—':p.agr}</div></div><div class="feed-item-hi">${fmtHI(hi)}</div></div>`; }).join('');
       html+=`</div></div>`;
     }
     if(returnedPlayers.length){
       html+=`<div class="feed-section"><div class="feed-section-header"><span class="feed-count c-green">${returnedPlayers.length}</span><span class="feed-title c-green">Снова в АГР</span></div><div class="feed-list">`;
-      html+=returnedPlayers.map(p=>{ const hi=p.history.find(h=>h.date===date)?.hi; const last2025=[...p.history].reverse().find(h=>h.date.startsWith('2025')); return`<div class="feed-item"><div class="feed-item-info"><div class="feed-item-name">${p.name}</div><div class="feed-item-sub">${p.agr} · последний раз в 2025: ${fmtDate(last2025?.date)}</div></div><div class="feed-item-hi">${fmtHI(hi)}</div></div>`; }).join('');
+      html+=returnedPlayers.map(p=>{ const hi=p.history.find(h=>h.date===date)?.hi; const last2025=[...p.history].reverse().find(h=>h.date.startsWith('2025')); return`<div class="feed-item" onclick="showProfileFromFeed('${p.agr}','feed')"><div class="feed-item-info"><div class="feed-item-name">${p.name}</div><div class="feed-item-sub">${p.agr} · последний раз в 2025: ${fmtDate(last2025?.date)}</div></div><div class="feed-item-hi">${fmtHI(hi)}</div></div>`; }).join('');
       html+=`</div></div>`;
     }
     if(changedPlayers.length){
       html+=`<div class="feed-section"><div class="feed-section-header"><span class="feed-count c-red">${changedPlayers.length}</span><span class="feed-title c-red">Изменили гандикап</span></div><div class="feed-list">`;
-      html+=changedPlayers.map(p=>{ const diff=(p.hiNow-p.hiPrev).toFixed(1); const dc=diff<0?'neg':'pos'; const sign=diff>0?'+':''; return`<div class="feed-item"><div class="feed-item-info"><div class="feed-item-name">${p.name}</div><div class="feed-item-sub">${p.agr.startsWith('NOAGR_')?'—':p.agr}</div></div><div class="feed-item-hi">${fmtHI(p.hiNow)}</div><div class="feed-item-delta ${dc}">${sign}${diff}</div></div>`; }).join('');
+      html+=changedPlayers.map(p=>{ const diff=(p.hiNow-p.hiPrev).toFixed(1); const dc=diff<0?'neg':'pos'; const sign=diff>0?'+':''; return`<div class="feed-item" onclick="showProfileFromFeed('${p.agr}','feed')"><div class="feed-item-info"><div class="feed-item-name">${p.name}</div><div class="feed-item-sub">${p.agr.startsWith('NOAGR_')?'—':p.agr}</div></div><div class="feed-item-hi">${fmtHI(p.hiNow)}</div><div class="feed-item-delta ${dc}">${sign}${diff}</div></div>`; }).join('');
       html+=`</div></div>`;
     }
     html+=`</div>`;
@@ -616,7 +619,7 @@ function showProfile(player){
   const deltaSign=delta>0?'+':'';
   const gindex=getGIndex(h);
   document.getElementById('playerName').textContent=player.name;
-  document.getElementById('playerAgr').textContent=player.agr.startsWith('NOAGR_')?'—':player.agr;
+  document.getElementById('playerAgr').textContent=(player.agr.startsWith('NOAGR_')?'—':player.agr)+(player.gender?' · '+player.gender:'');
   if(player.notPaid)document.getElementById('agrBadge').classList.add('active');
   const fromBest = gindex !== null ? parseFloat((curHI - gindex).toFixed(1)) : 0;
   const fromBestStr = fromBest > 0.001 ? `<span class="meta-sub">+${fromBest.toFixed(1)} от лучшего</span>` : '';
@@ -923,7 +926,6 @@ function parseTextHistory(text) {
 function buildStats(){
   if(!allData.length)return;
   const el=document.getElementById('statsContent');
-  // Только активные игроки — с HI в 2026
   const active=allData.filter(p=>p.history.some(h=>h.date.startsWith('2026')));
   const men=active.filter(p=>p.gender==='Муж.');
   const women=active.filter(p=>p.gender==='Жен.');
@@ -936,53 +938,86 @@ function buildStats(){
   ];
   function getHI(p){const h=p.history.filter(x=>x.date.startsWith('2026'));return h.length?h[h.length-1].hi:null;}
   function zoneCount(players,zone){return players.filter(p=>{const hi=getHI(p);return hi!==null&&hi>=zone.min&&hi<zone.max;}).length;}
+  const maxZone=Math.max(...zones.map(z=>zoneCount(active,z)));
 
   let html=`
     <div style="background:var(--card);border-radius:var(--r);padding:20px;margin-bottom:8px;">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink3);margin-bottom:12px;">Активных игроков в 2026</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px;">Реестр АГР · Сезон 2026</div>
+      <div style="font-size:12px;color:var(--ink3);margin-bottom:14px;">Игроки с зарегистрированным HI в текущем сезоне</div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
         <div style="background:var(--bg);border-radius:8px;padding:12px;text-align:center;">
           <div style="font-size:9px;font-weight:600;color:var(--ink3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:4px;">Всего</div>
           <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:36px;color:var(--ink);">${active.length}</div>
         </div>
         <div style="background:var(--bg);border-radius:8px;padding:12px;text-align:center;">
-          <div style="font-size:9px;font-weight:600;color:var(--ink3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:4px;">Мужчины</div>
+          <div style="font-size:9px;font-weight:600;color:var(--blue);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:4px;">Мужчины</div>
           <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:36px;color:var(--blue);">${men.length}</div>
+          <div style="font-size:10px;color:var(--ink3);">${active.length?Math.round(men.length/active.length*100):0}%</div>
         </div>
         <div style="background:var(--bg);border-radius:8px;padding:12px;text-align:center;">
-          <div style="font-size:9px;font-weight:600;color:var(--ink3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:4px;">Женщины</div>
+          <div style="font-size:9px;font-weight:600;color:var(--red);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:4px;">Женщины</div>
           <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:36px;color:var(--red);">${women.length}</div>
+          <div style="font-size:10px;color:var(--ink3);">${active.length?Math.round(women.length/active.length*100):0}%</div>
         </div>
       </div>
     </div>
     <div style="background:var(--card);border-radius:var(--r);padding:20px;margin-bottom:8px;">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink3);margin-bottom:12px;">Гандикапные зоны</div>
-      <table style="width:100%;border-collapse:collapse;">
-        <thead><tr>
-          <th style="font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink3);padding:8px 0;text-align:left;">Зона</th>
-          <th style="font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink3);padding:8px 0;text-align:center;">Всего</th>
-          <th style="font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--blue);padding:8px 0;text-align:center;">Муж.</th>
-          <th style="font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--red);padding:8px 0;text-align:center;">Жен.</th>
-        </tr></thead>
-        <tbody>`;
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;">Распределение по гандикапу</div>`;
+
   for(const z of zones){
     const total=zoneCount(active,z);
     const m=zoneCount(men,z);
     const w=zoneCount(women,z);
     const pct=active.length?Math.round(total/active.length*100):0;
-    html+=`<tr style="border-top:0.5px solid var(--line);">
-      <td style="padding:12px 0;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;">${z.label}</td>
-      <td style="padding:12px 0;text-align:center;">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:22px;">${total}</div>
-        <div style="font-size:10px;color:var(--ink3);">${pct}%</div>
-      </td>
-      <td style="padding:12px 0;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:22px;color:var(--blue);">${m}</td>
-      <td style="padding:12px 0;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:22px;color:var(--red);">${w}</td>
-    </tr>`;
+    const barW=maxZone>0?Math.round(total/maxZone*100):0;
+    const mPct=total>0?Math.round(m/total*100):0;
+    html+=`
+      <div style="margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;">${z.label}</span>
+          <span style="font-size:12px;color:var(--ink3);">${total} игроков · ${pct}%</span>
+        </div>
+        <div style="height:28px;background:var(--bg);border-radius:6px;overflow:hidden;position:relative;">
+          <div style="position:absolute;left:0;top:0;bottom:0;width:${barW}%;display:flex;">
+            <div style="background:var(--blue);flex:${mPct};"></div>
+            <div style="background:var(--red);flex:${100-mPct};"></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:4px;">
+          <span style="font-size:11px;color:var(--blue);">Муж. ${m}</span>
+          <span style="font-size:11px;color:var(--red);">Жен. ${w}</span>
+        </div>
+      </div>`;
   }
-  html+=`</tbody></table></div>`;
+  html+=`</div>`;
   el.innerHTML=html;
 }
+
+
+
+let navHistory = [];
+
+function goBack() {
+  if(navHistory.length === 0) return;
+  const prev = navHistory.pop();
+  if(prev.tab === 'feed') {
+    switchTab('feed');
+    // Restore feed scroll position
+    setTimeout(() => window.scrollTo(0, prev.scrollY || 0), 50);
+  }
+  document.getElementById('backBtn').style.display = 'none';
+}
+
+function showProfileFromFeed(agr, fromTab) {
+  navHistory.push({tab: fromTab || 'feed', scrollY: window.scrollY});
+  switchTab('search');
+  const p = allData.find(x => x.agr === agr);
+  if(!p) return;
+  document.getElementById('searchInput').value = p.name;
+  showProfile(p);
+  document.getElementById('backBtn').style.display = 'inline-block';
+}
+
 async function init(forceRefresh){
   document.getElementById('loading').classList.add('active');
   document.getElementById('refreshWrap').style.display='none';
