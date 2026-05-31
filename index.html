@@ -950,13 +950,13 @@ function buildStats(){
           <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:36px;color:var(--ink);">${active.length}</div>
         </div>
         <div style="background:var(--bg);border-radius:8px;padding:12px;text-align:center;">
-          <div style="font-size:9px;font-weight:600;color:var(--blue);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:4px;">Мужчины</div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:36px;color:var(--blue);">${men.length}</div>
+          <div style="font-size:9px;font-weight:600;color:#4A7FA5;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:4px;">Мужчины</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:36px;color:#4A7FA5;">${men.length}</div>
           <div style="font-size:10px;color:var(--ink3);">${active.length?Math.round(men.length/active.length*100):0}%</div>
         </div>
         <div style="background:var(--bg);border-radius:8px;padding:12px;text-align:center;">
-          <div style="font-size:9px;font-weight:600;color:var(--red);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:4px;">Женщины</div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:36px;color:var(--red);">${women.length}</div>
+          <div style="font-size:9px;font-weight:600;color:#A04040;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:4px;">Женщины</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:36px;color:#A04040;">${women.length}</div>
           <div style="font-size:10px;color:var(--ink3);">${active.length?Math.round(women.length/active.length*100):0}%</div>
         </div>
       </div>
@@ -979,13 +979,13 @@ function buildStats(){
         </div>
         <div style="height:28px;background:var(--bg);border-radius:6px;overflow:hidden;position:relative;">
           <div style="position:absolute;left:0;top:0;bottom:0;width:${barW}%;display:flex;">
-            <div style="background:var(--blue);flex:${mPct};"></div>
-            <div style="background:var(--red);flex:${100-mPct};"></div>
+            <div style="background:#4A7FA5;flex:${mPct};"></div>
+            <div style="background:#A04040;flex:${100-mPct};"></div>
           </div>
         </div>
         <div style="display:flex;gap:12px;margin-top:4px;">
-          <span style="font-size:11px;color:var(--blue);">Муж. ${m}</span>
-          <span style="font-size:11px;color:var(--red);">Жен. ${w}</span>
+          <span style="font-size:11px;color:#4A7FA5;">Муж. ${m}</span>
+          <span style="font-size:11px;color:#A04040;">Жен. ${w}</span>
         </div>
       </div>`;
   }
