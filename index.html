@@ -462,22 +462,23 @@ async function loadData(){
 function parseData(rows){
   if(!rows.length)return[];
   const headers=rows[0];
-  const dates=headers.slice(5).map(d=>toISO(String(d)));
+  const dates=headers.slice(6).map(d=>toISO(String(d)));
   allDates=[...new Set(dates)].sort();
   return rows.slice(1).map(row=>{
     const agr=(row[0]||'').trim();
     const name=(row[1]||'').trim();
-    const changes=parseInt(row[2])||0;
-    const drops=parseInt(row[3])||0;
-    const rises=parseInt(row[4])||0;
-    const history=dates.map((date,i)=>{ const raw=row[5+i]; const hi=(raw!==undefined&&raw!=='')?parseFloat(String(raw).replace(',','.')):null; return{date,hi}; }).filter(d=>d.hi!==null&&!isNaN(d.hi));
+    const gender=(row[2]||'').trim();
+    const changes=parseInt(row[3])||0;
+    const drops=parseInt(row[4])||0;
+    const rises=parseInt(row[5])||0;
+    const history=dates.map((date,i)=>{ const raw=row[6+i]; const hi=(raw!==undefined&&raw!=='')?parseFloat(String(raw).replace(',','.')):null; return{date,hi}; }).filter(d=>d.hi!==null&&!isNaN(d.hi));
     const presentDates=new Set(history.map(h=>h.date));
     const notPaid=agr.startsWith('NOAGR_')||!history.some(d=>d.date.startsWith('2026'));
     const firstDate=history.length?history[0].date:null;
     let lastChangeDate=history.length?history[0].date:null;
     for(let i=1;i<history.length;i++){ if(history[i].hi!==history[i-1].hi)lastChangeDate=history[i].date; }
     const stale=lastChangeDate?daysSince(lastChangeDate)>=STALE_DAYS:false;
-    return{agr,name,changes,drops,rises,history,presentDates,notPaid,firstDate,lastChangeDate,stale};
+    return{agr,name,gender,changes,drops,rises,history,presentDates,notPaid,firstDate,lastChangeDate,stale};
   });
 }
 function getGIndex(h){ const vals=h.map(d=>d.hi).filter(v=>v!==null&&!isNaN(v)); return vals.length?Math.min(...vals):null; }
