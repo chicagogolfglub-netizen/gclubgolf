@@ -383,9 +383,9 @@ const TIMAKOV_HISTORY = [
   {date:'2025-08-31',tournament:'Турнир Сколково',club:'ЛИНКС Нэшнл гольф-клуб',format:'СФД-18',score:98,stbl:36,hi:22.0}
 ];
 (function(){
-  if(localStorage.getItem('app_version') !== '7') {
+  if(localStorage.getItem('app_version') !== '8') {
     localStorage.clear();
-    localStorage.setItem('app_version','7');
+    localStorage.setItem('app_version','8');
   }
 })();
 const API_KEY='AIzaSyBvrpd_FFS4VoPKNLcJsWFMUPxP34sfkcE';
@@ -454,18 +454,22 @@ function daysSince(s){ if(!s)return 9999; return Math.round((Date.now()-new Date
 async function loadData(){
   const CACHE_KEY='gindex_data';
   const CACHE_TS='gindex_ts';
-  const CACHE_TTL=60*60*1000;
+  const CACHE_TTL=6*60*60*1000;
   try{
     const ts=parseInt(localStorage.getItem(CACHE_TS)||'0');
     const cached=localStorage.getItem(CACHE_KEY);
-    if(cached&&Date.now()-ts<CACHE_TTL){ return JSON.parse(cached); }
+    // Auto-invalidate at start of new day (Moscow time)
+    const todayStr=new Date().toLocaleDateString('ru-RU');
+    const cachedDay=localStorage.getItem('cache_day');
+    if(cachedDay&&cachedDay!==todayStr){localStorage.removeItem(CACHE_KEY);localStorage.removeItem(CACHE_TS);}
+    else if(cached&&Date.now()-ts<CACHE_TTL){ return JSON.parse(cached); }
   }catch(e){}
   const url=`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
   const res=await fetch(url);
   const json=await res.json();
   if(json.error)throw new Error(json.error.message);
   const values=json.values||[];
-  try{ localStorage.setItem(CACHE_KEY,JSON.stringify(values)); localStorage.setItem(CACHE_TS,String(Date.now())); }catch(e){}
+  try{ localStorage.setItem(CACHE_KEY,JSON.stringify(values)); localStorage.setItem(CACHE_TS,String(Date.now())); localStorage.setItem('cache_day',new Date().toLocaleDateString('ru-RU')); }catch(e){}
   return values;
 }
 function parseData(rows){
